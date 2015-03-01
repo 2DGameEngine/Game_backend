@@ -16,8 +16,26 @@ bool GameObject::define_animation(std::string animation_name,std::vector<int> fr
 	return true;
 }
 void GameObject::update(){
-	//velocity+=acceleration;
-	//position+=velocity;
+	velocity=Vector2D(0,0);
+	set_state("stop");
+	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
+		set_state("flying");
+		velocity.setX(1);
+	}
+	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_A)){
+		set_state("flying");
+		velocity.setX(-1);
+	}
+	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
+		set_state("flying");
+		velocity.setY(-1);
+	}
+	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
+		set_state("flying");
+		velocity.setY(1);
+	}
+	velocity+=acceleration;
+	position+=velocity;
 }
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;
@@ -35,8 +53,8 @@ void GameObject::draw(){
 GameObject::GameObject(std::string state_id,int width,int height){
 		GameObject::state_id=state_id;
 		GameObject::position = Vector2D();
-		GameObject::velocity = Vector2D();
-		GameObject::acceleration = Vector2D();
+		GameObject::velocity = Vector2D(0,0);
+		GameObject::acceleration = Vector2D(.01,.01);
 		GameObject::width=width;
 		GameObject::height=height;
 	}

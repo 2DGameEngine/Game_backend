@@ -7,6 +7,7 @@
 #include <SDL_image.h>
 #include <map>
 #include <vector>
+#include "InputHandler.h"
 class GameObject{
 public:
 	GameObject(std::string state_id,int width,int height);
@@ -16,6 +17,9 @@ public:
 	void update();
 	void draw();
 	void clean();
+	void set_state(std::string state_id){
+		GameObject::state_id=state_id;
+	}
 private:
 	Vector2D position;
 	Vector2D velocity;

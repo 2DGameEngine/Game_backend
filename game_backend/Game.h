@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include <iostream>
 #include <vector>
+#include "InputHandler.h"
 class GameObject;
 class Game{
 public:

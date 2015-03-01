@@ -10,12 +10,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		m_bRunning=true;
 		player= new GameObject("flying",128,55);
 		player->loadSprite("assets/helicopter.png");
-		std::vector<int> seq;
-		seq.push_back(1);
-		seq.push_back(2);
-		seq.push_back(2);
-		seq.push_back(1);
-		player->define_animation("flying",seq);
+		std::vector<int> seq1;
+		seq1.push_back(1);
+		player->define_animation("stop",seq1);
+		std::vector<int> seq2;
+		seq2.push_back(1);
+		seq2.push_back(2);
+		seq2.push_back(3);
+		seq2.push_back(4);
+		seq2.push_back(5);
+		player->define_animation("flying",seq2);
 		return true;
 	}
 	else{
@@ -29,6 +33,7 @@ void Game::render(){
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::update(){
+	InputHandler::Instance()->update();
 	player->update();
 }
 void Game::clean(){
