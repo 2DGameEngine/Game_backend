@@ -13,7 +13,7 @@ public:
 	GameObject(std::string state_id,int width,int height);
 	std::string state_id;
 	bool loadSprite(std::string filename);
-	bool define_animation(std::string animation_name,std::vector<int>);
+	bool define_animation(std::string animation_name,std::vector<std::pair<int,int>>,float speed);
 	void update();
 	void draw();
 	void clean();
@@ -27,7 +27,7 @@ private:
 	int width;
 	int height;
 	SDL_Texture* texture;
-	std::map <std::string,std::vector<int>> animations;
+	std::map <std::string,std::pair<std::vector<std::pair<int,int>>,float>> animations;
 	//collision polygon
  
 };

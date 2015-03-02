@@ -11,39 +11,44 @@ bool GameObject::loadSprite(std::string filename){
 	SDL_FreeSurface(pTempSurface);
 	return true;
 }
-bool GameObject::define_animation(std::string animation_name,std::vector<int> frame_ids){
-	animations[animation_name]=frame_ids;
+bool GameObject::define_animation(std::string animation_name,std::vector<std::pair<int,int>> frame_ids,float speed){
+	animations[animation_name]=std::make_pair(frame_ids,speed);
 	return true;
 }
 void GameObject::update(){
 	velocity=Vector2D(0,0);
 	set_state("stop");
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
-		set_state("flying");
+		set_state("walk_right");
 		velocity.setX(1);
 	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_A)){
-		set_state("flying");
+		set_state("walk_left");
 		velocity.setX(-1);
 	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
-		set_state("flying");
-		velocity.setY(-1);
+		set_state("walk_right");
+		velocity.setY(-5);
 	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
-		set_state("flying");
+		set_state("walk_left");
 		velocity.setY(1);
 	}
+	if(position.getY()>400){
+		position.setY(400);
+	}
+	acceleration.setY(6);
 	velocity+=acceleration;
 	position+=velocity;
 }
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;
 	SDL_Rect sourceRectangle;
-	int frame_number=int((SDL_GetTicks()/100) %(animations[state_id].size()));
+	int refresh_rate=100/(animations[state_id].second);
+	int frame_number=int((SDL_GetTicks()/refresh_rate) %(animations[state_id].first.size()));
 	std::cout<<frame_number;
-	sourceRectangle.x = (animations[state_id][frame_number]-1)*width;
-	sourceRectangle.y = 0;
+	sourceRectangle.x = (animations[state_id].first[frame_number].second-1)*width;
+	sourceRectangle.y = (animations[state_id].first[frame_number].first-1)*height;
 	destinationRectangle.x = position.getX();
 	destinationRectangle.y = position.getY();
 	destinationRectangle.w = sourceRectangle.w=width;
