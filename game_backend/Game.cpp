@@ -8,12 +8,12 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 		m_bRunning=true;
-		player= new GameObject("flying",500/6,378/3);
-		player->loadSprite("assets/dude.png");
+		Model* dude=new Model();
+		dude->load_texture("assets/dude.png");
+		dude->set_width_and_height_frame(500/6,378/3);
 		std::vector<std::pair<int,int>> seq1;
 		seq1.push_back(std::make_pair(3,1));
 		seq1.push_back(std::make_pair(3,2));
-		player->define_animation("stop",seq1,.1);
 		std::vector<std::pair<int,int>> seq2;
 		seq2.push_back(std::make_pair(1,1));
 		seq2.push_back(std::make_pair(1,2));
@@ -21,7 +21,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		seq2.push_back(std::make_pair(1,4));
 		seq2.push_back(std::make_pair(1,5));
 		seq2.push_back(std::make_pair(1,6));
-		player->define_animation("walk_right",seq2,.8);
 		std::vector<std::pair<int,int>> seq3;
 		seq3.push_back(std::make_pair(2,1));
 		seq3.push_back(std::make_pair(2,2));
@@ -29,7 +28,17 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		seq3.push_back(std::make_pair(2,4));
 		seq3.push_back(std::make_pair(2,5));
 		seq3.push_back(std::make_pair(2,6));
-		player->define_animation("walk_left",seq3,.8);
+		dude->addAnimation(new Animation("standing",seq1,.1));
+		dude->addAnimation(new Animation("walk_right",seq2,1));
+		dude->addAnimation(new Animation("walk_left",seq3,2));
+		dude_sasi= new GameObject("standing",dude,500/6,378/3);
+		dude_sasi->add_state_animation_pair("standing","standing");
+		dude_sasi->add_state_animation_pair("walk_right","walk_right");
+		dude_sasi->add_state_animation_pair("walk_left","walk_left");
+		chick_sarala= new GameObject("standing",dude,50,50);
+		chick_sarala->add_state_animation_pair("standing","standing");
+		chick_sarala->add_state_animation_pair("walk_right","walk_right");
+		chick_sarala->add_state_animation_pair("walk_left","walk_left");
 		return true;
 	}
 	else{
@@ -39,12 +48,14 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 }
 void Game::render(){
 	SDL_RenderClear(m_pRenderer);
-	player->draw();
+	dude_sasi->draw();
+	chick_sarala->draw();
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::update(){
 	InputHandler::Instance()->update();
-	player->update();
+	dude_sasi->update();
+	chick_sarala->update();
 }
 void Game::clean(){
 	std::cout<<"cleaning\n";

@@ -12,7 +12,8 @@ public:
 	void render();
 	void update();
 	void clean();
-	GameObject* player;
+	GameObject* dude_sasi;
+	GameObject* chick_sarala;
 	bool running(){ return m_bRunning;}
 	void quit(){m_bRunning=false;} 
 	static Game* Instance(){
