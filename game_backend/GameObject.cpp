@@ -14,11 +14,11 @@ void GameObject::update(){
 		setState("walk_left");
 		velocity.setX(-1);
 	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
-		setState("walk_right");
-		velocity.setY(-5);
-	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
+		setState("walk_right");
+		velocity.setY(-1);
+	}
+	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
 		setState("walk_left");
 		velocity.setY(1);
 	}
@@ -37,7 +37,7 @@ else{
 	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
 		setState("walk_right");
-		velocity.setY(-5);
+		velocity.setY(-1);
 	}
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
 		setState("walk_left");
@@ -47,7 +47,7 @@ else{
 		position.setY(400);
 	}
 }
-	acceleration.setY(6);
+	//acceleration.setY(6);
 	velocity+=acceleration;
 	position+=velocity;
 }

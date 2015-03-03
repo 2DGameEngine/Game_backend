@@ -29,8 +29,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		seq3.push_back(std::make_pair(2,5));
 		seq3.push_back(std::make_pair(2,6));
 		dude->addAnimation(new Animation("standing",seq1,.1));
-		dude->addAnimation(new Animation("walk_right",seq2,1));
-		dude->addAnimation(new Animation("walk_left",seq3,2));
+		dude->addAnimation(new Animation("walk_right",seq2,.8));
+		dude->addAnimation(new Animation("walk_left",seq3,.8));
 		dude_sasi= new GameObject("standing",dude,500/6,378/3);
 		dude_sasi->add_state_animation_pair("standing","standing");
 		dude_sasi->add_state_animation_pair("walk_right","walk_right");
