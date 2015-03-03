@@ -31,14 +31,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		dude->addAnimation(new Animation("standing",seq1,.1));
 		dude->addAnimation(new Animation("walk_right",seq2,.8));
 		dude->addAnimation(new Animation("walk_left",seq3,.8));
-		dude_sasi= new GameObject("standing",dude,500/6,378/3);
+		GameObject* dude_sasi= new GameObject("standing",dude,500/6,378/3);
 		dude_sasi->add_state_animation_pair("standing","standing");
 		dude_sasi->add_state_animation_pair("walk_right","walk_right");
 		dude_sasi->add_state_animation_pair("walk_left","walk_left");
-		chick_sarala= new GameObject("standing",dude,50,50);
+		GameObject* chick_sarala= new GameObject("standing",dude,50,50);
 		chick_sarala->add_state_animation_pair("standing","standing");
 		chick_sarala->add_state_animation_pair("walk_right","walk_right");
 		chick_sarala->add_state_animation_pair("walk_left","walk_left");
+		GameObjectManager::Instance()->addObject(dude_sasi);
+		GameObjectManager::Instance()->addObject(chick_sarala);
 		return true;
 	}
 	else{
@@ -48,14 +50,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 }
 void Game::render(){
 	SDL_RenderClear(m_pRenderer);
-	dude_sasi->draw();
-	chick_sarala->draw();
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->draw();
+	}
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::update(){
 	InputHandler::Instance()->update();
-	dude_sasi->update();
-	chick_sarala->update();
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->update();
+	}
 }
 void Game::clean(){
 	std::cout<<"cleaning\n";

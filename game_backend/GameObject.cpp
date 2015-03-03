@@ -77,3 +77,7 @@ GameObject::GameObject(std::string state,Model* model,int width,int height){
 		GameObject::width=width;
 		GameObject::height=height;
 	}
+GameObject::GameObject(std::string state,Model* model,int width,int height,std::string object_id){
+	GameObject(state,model,width,height);
+	GameObject::object_id=object_id;
+}

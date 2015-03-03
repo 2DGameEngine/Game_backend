@@ -9,9 +9,11 @@
 #include <vector>
 #include "InputHandler.h"
 #include "Model.h"
+class Model;
 class GameObject{
 public:
 	GameObject(std::string state_id,Model*,int width,int height);
+	GameObject(std::string state_id,Model*,int width,int height,std::string);
 	void update();
 	void draw();
 	void clean();
@@ -22,6 +24,7 @@ public:
 		return state_animation_map[state];
 	}
 	void add_state_animation_pair(std::string,std::string);
+	std::string object_id;
 private:
 	Vector2D position;
 	Vector2D velocity;
