@@ -5,7 +5,10 @@ void GameObject::add_state_animation_pair(std::string state_name,std::string ani
 void GameObject::update(){
 	velocity=Vector2D(0,0);
 	setState("standing");
-	if(width==50){
+	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {
+		events[i]->handleEvent();
+	}
+	/*if(width==50){
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
 		setState("walk_right");
 		velocity.setX(1);
@@ -47,6 +50,7 @@ else{
 		position.setY(400);
 	}
 }
+*/
 	//acceleration.setY(6);
 	velocity+=acceleration;
 	position+=velocity;
@@ -54,7 +58,6 @@ else{
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;
 	SDL_Rect sourceRectangle;
-	std::cout<<model->getAnimation(getAnimationName(state))->animation_name;
 	Animation* animation=model->getAnimation(getAnimationName(state));
 	int refresh_rate=100/(animation->speed);
 	int frame_number=int((SDL_GetTicks()/refresh_rate) %(animation->frame_ids.size()));
@@ -69,6 +72,7 @@ void GameObject::draw(){
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
 GameObject::GameObject(std::string state,Model* model,int width,int height){
+		static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = Vector2D();
 		GameObject::model=model;
@@ -76,8 +80,13 @@ GameObject::GameObject(std::string state,Model* model,int width,int height){
 		GameObject::acceleration = Vector2D(.01,.01);
 		GameObject::width=width;
 		GameObject::height=height;
+		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
+		object_num++;
 	}
 GameObject::GameObject(std::string state,Model* model,int width,int height,std::string object_id){
 	GameObject(state,model,width,height);
 	GameObject::object_id=object_id;
+}
+void GameObject::addEvent(Event* event){
+	events.push_back(event);
 }

@@ -7,6 +7,8 @@
 #include <utility>
 #include "GameObjectManager.h"
 #include "GameObject.h"
+#include "Event.h"
+#include "Action.h"
 class GameObject;
 class Game{
 public:

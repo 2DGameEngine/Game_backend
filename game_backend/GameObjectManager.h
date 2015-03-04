@@ -2,6 +2,7 @@
 #define _GAMEOBJECTMANAGER_
 #include "GameObject.h"
 #include <vector>
+#include <map>
 class GameObject;
 class GameObjectManager{
 public:
@@ -15,8 +16,10 @@ public:
 	std::vector<GameObject*> getObjectList(){
 		return game_object_list;
 	}
+	GameObject* getObject(std::string);
 private:
 	std::vector<GameObject*> game_object_list;
 	static GameObjectManager* s_pInstance;
+	std::map <std::string,GameObject*> id_object_map;
 };
 #endif

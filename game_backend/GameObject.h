@@ -10,6 +10,7 @@
 #include "InputHandler.h"
 #include "Model.h"
 class Model;
+class Event;
 class GameObject{
 public:
 	GameObject(std::string state_id,Model*,int width,int height);
@@ -20,11 +21,18 @@ public:
 	void setState(std::string state){
 		GameObject::state=state;
 	}
+	void setVelocity(Vector2D velocity){
+		GameObject::velocity=velocity;
+	}
+	void setPosition(Vector2D position){
+		GameObject::position=position;
+	}
 	std::string getAnimationName(std::string state){
 		return state_animation_map[state];
 	}
 	void add_state_animation_pair(std::string,std::string);
 	std::string object_id;
+	void addEvent(Event* event);
 private:
 	Vector2D position;
 	Vector2D velocity;
@@ -34,6 +42,7 @@ private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;
 	std::string state;
+	std::vector<Event*> events;
 	//std::map <std::string,std::pair<std::vector<std::pair<int,int>>,float>> animations;
 	//collision polygon
  
