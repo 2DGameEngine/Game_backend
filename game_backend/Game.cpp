@@ -31,38 +31,37 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		dude->addAnimation(new Animation("standing",seq1,.1));
 		dude->addAnimation(new Animation("walk_right",seq2,.8));
 		dude->addAnimation(new Animation("walk_left",seq3,.8));
-		GameObject* dude_sasi= new GameObject("standing",dude,500/6,378/3);
-		dude_sasi->add_state_animation_pair("standing","standing");
-		dude_sasi->add_state_animation_pair("walk_right","walk_right");
-		dude_sasi->add_state_animation_pair("walk_left","walk_left");
-		GameObject* chick_sarala= new GameObject("standing",dude,50,50);
-		chick_sarala->add_state_animation_pair("standing","standing");
-		chick_sarala->add_state_animation_pair("walk_right","walk_right");
-		chick_sarala->add_state_animation_pair("walk_left","walk_left");
-		Event* e=new Event();
-		e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-		e->addAction(new Action("set_velocity",dude_sasi,Vector2D(1,0)));
-		e->addAction(new Action("set_state",dude_sasi,"walk_right"));
-		dude_sasi->addEvent(e);
-		e=new Event();
-		e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
-		e->addAction(new Action("set_velocity",dude_sasi,Vector2D(-1,0)));
-		e->addAction(new Action("set_state",dude_sasi,"walk_left"));
-		dude_sasi->addEvent(e);
-		e=new Event();
-		e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
-		e->addAction(new Action("set_velocity",dude_sasi,Vector2D(0,-1)));
-		e->addAction(new Action("set_state",dude_sasi,"walk_left"));
-		dude_sasi->addEvent(e);
-		e=new Event();
-		e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
-		e->addAction(new Action("set_velocity",dude_sasi,Vector2D(0,2)));
-		e->addAction(new Action("set_state",dude_sasi,"walk_left"));
-		dude_sasi->addEvent(e);
-		GameObjectManager::Instance()->addObject(dude_sasi);
-		GameObjectManager::Instance()->addObject(chick_sarala);
-		std::cout<<dude_sasi->object_id;
-		std::cout<<chick_sarala->object_id;
+		
+		GameObject* go;
+		Event* e;
+		for(int i=0;i<400;i++){
+			go=new GameObject("standing",dude,500/6,378/3,Vector2D((i*500/6 +5)%600,(i*500/6 +5)/600*378/3));
+			go->add_state_animation_pair("standing","standing");
+			go->add_state_animation_pair("walk_right","walk_right");
+			go->add_state_animation_pair("walk_left","walk_left");
+			e= new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
+			e->addAction(new Action("set_velocity",go,Vector2D(1,0)));
+			e->addAction(new Action("set_state",go,"walk_right"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
+			e->addAction(new Action("set_velocity",go,Vector2D(-1,0)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
+			e->addAction(new Action("set_velocity",go,Vector2D(0,-1)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
+			e->addAction(new Action("set_velocity",go,Vector2D(0,2)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			GameObjectManager::Instance()->addObject(go);
+		}
+
 		return true;
 	}
 	else{

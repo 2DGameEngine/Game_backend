@@ -71,10 +71,10 @@ void GameObject::draw(){
 	sourceRectangle.h=model->height_of_frame;
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
-GameObject::GameObject(std::string state,Model* model,int width,int height){
+GameObject::GameObject(std::string state,Model* model,int width,int height,Vector2D position){
 		static int object_num=0;
 		GameObject::state=state;
-		GameObject::position = Vector2D();
+		GameObject::position = position;
 		GameObject::model=model;
 		GameObject::velocity = Vector2D(0,0);
 		GameObject::acceleration = Vector2D(.01,.01);
@@ -83,8 +83,8 @@ GameObject::GameObject(std::string state,Model* model,int width,int height){
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 	}
-GameObject::GameObject(std::string state,Model* model,int width,int height,std::string object_id){
-	GameObject(state,model,width,height);
+GameObject::GameObject(std::string state,Model* model,int width,int height,Vector2D position,std::string object_id){
+	GameObject(state,model,width,height,position);
 	GameObject::object_id=object_id;
 }
 void GameObject::addEvent(Event* event){

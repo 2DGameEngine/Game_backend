@@ -13,8 +13,8 @@ class Model;
 class Event;
 class GameObject{
 public:
-	GameObject(std::string state_id,Model*,int width,int height);
-	GameObject(std::string state_id,Model*,int width,int height,std::string);
+	GameObject(std::string state_id,Model*,int width,int height,Vector2D position);
+	GameObject(std::string state_id,Model*,int width,int height,Vector2D position,std::string);
 	void update();
 	void draw();
 	void clean();
