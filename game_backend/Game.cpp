@@ -34,7 +34,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		
 		GameObject* go;
 		Event* e;
-		for(int i=0;i<400;i++){
+		for(int i=0;i<50;i++){
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D((i*500/6 +5)%600,(i*500/6 +5)/600*378/3));
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
