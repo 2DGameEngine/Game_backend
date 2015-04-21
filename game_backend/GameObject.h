@@ -16,6 +16,7 @@ public:
 	GameObject(std::string state_id,Model*,int width,int height,Vector2D position);
 	GameObject(std::string state_id,Model*,int width,int height,Vector2D position,std::string);
 	void update();
+	void defaultUpdate();
 	void draw();
 	void clean();
 	void setState(std::string state){
@@ -33,6 +34,7 @@ public:
 	void add_state_animation_pair(std::string,std::string);
 	std::string object_id;
 	void addEvent(Event* event);
+	bool updated;
 private:
 	Vector2D position;
 	Vector2D velocity;

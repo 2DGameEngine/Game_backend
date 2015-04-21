@@ -81,6 +81,12 @@ void Game::update(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObjectManager::Instance()->getObjectList()[i]->update();
 	}
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size()&&GameObjectManager::Instance()->getObjectList()[i]->updated==false; i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->defaultUpdate();
+	}
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->updated=false;
+	}
 }
 void Game::clean(){
 	std::cout<<"cleaning\n";

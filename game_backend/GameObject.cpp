@@ -2,9 +2,11 @@
 void GameObject::add_state_animation_pair(std::string state_name,std::string animation_name){
 	state_animation_map[state_name]=animation_name;
 }
-void GameObject::update(){
+void GameObject::defaultUpdate(){
 	velocity=Vector2D(0,0);
 	setState("standing");
+}
+void GameObject::update(){
 	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {
 		events[i]->handleEvent();
 	}
@@ -82,6 +84,7 @@ GameObject::GameObject(std::string state,Model* model,int width,int height,Vecto
 		GameObject::height=height;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
+		updated=false;
 	}
 GameObject::GameObject(std::string state,Model* model,int width,int height,Vector2D position,std::string object_id){
 	GameObject(state,model,width,height,position);

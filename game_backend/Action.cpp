@@ -1,5 +1,6 @@
 #include "Action.h"
 void Action::runAction(){
+	game_object->updated=true;
 	if(action_type=="set_velocity"){
 		ActionTypes::Instance()->setVelocity(game_object,vector);
 	}
