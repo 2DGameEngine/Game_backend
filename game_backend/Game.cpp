@@ -4,7 +4,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 	int flags=0;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
-	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))){
+	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 		m_bRunning=true;
@@ -34,6 +34,12 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		
 		GameObject* go;
 		Event* e;
+		Sound* s=new Sound("effect");
+		s->load("assets/footsteps-4.wav");
+		Sound* s2=new Sound("effect");
+		s2->load("assets/a.wav");
+		SoundManager::Instance()->addSound(s,"walking_sound");
+		SoundManager::Instance()->addSound(s2,"walking_sound1");
 		for(int i=0;i<50;i++){
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D((i*500/6 +5)%600,(i*500/6 +5)/600*378/3));
 			go->add_state_animation_pair("standing","standing");
@@ -53,15 +59,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
 			e->addAction(new Action("set_velocity",go,Vector2D(0,-1)));
 			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("play_sound","walking_sound1"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
 			e->addAction(new Action("set_velocity",go,Vector2D(0,2)));
 			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
 			GameObjectManager::Instance()->addObject(go);
 		}
-
 		return true;
 	}
 	else{

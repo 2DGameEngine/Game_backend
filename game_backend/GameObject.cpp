@@ -5,6 +5,7 @@ void GameObject::add_state_animation_pair(std::string state_name,std::string ani
 void GameObject::defaultUpdate(){
 	velocity=Vector2D(0,0);
 	setState("standing");
+	Mix_HaltChannel(-1);
 }
 void GameObject::update(){
 	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {

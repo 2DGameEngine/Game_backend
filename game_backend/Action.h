@@ -16,6 +16,11 @@ public:
 		Action::string=string;
 		Action::game_object=game_object;
 	}
+	Action(std::string action_type,std::string string){
+		Action::action_type=action_type;
+		Action::string=string;
+		Action::game_object=NULL;
+	}
 private:
 	std::string action_type;
 	GameObject* game_object;
