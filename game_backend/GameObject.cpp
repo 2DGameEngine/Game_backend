@@ -5,10 +5,11 @@ void GameObject::add_state_animation_pair(std::string state_name,std::string ani
 void GameObject::defaultUpdate(){
 	velocity=Vector2D(0,0);
 	setState("standing");
+	Mix_HaltChannel(-1);
 }
-void GameObject::update(){
+void GameObject::update(bool coll_cond){
 	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {
-		events[i]->handleEvent();
+		events[i]->handleEvent(coll_cond);
 	}
 	/*if(width==50){
 	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
@@ -54,10 +55,11 @@ else{
 }
 */
 	//acceleration.setY(6);
+	if(coll_cond==false){
 	velocity+=acceleration;
 	position+=velocity;
 	collision_polygon->updatePosition(position.getX(),position.getY());
-	std::cout<<(velocity.getX())<<"\n";
+	}
 }
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;

@@ -16,7 +16,7 @@ class GameObject{
 public:
 	GameObject(std::string state_id,Model*,float width,float height,Vector2D position);
 	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string);
-	void update();
+	void update(bool);
 	void defaultUpdate();
 	void draw();
 	void clean();
@@ -59,6 +59,7 @@ public:
 	Vector2D position;
 	Vector2D velocity;
 	Vector2D acceleration;
+	void deleteOb();
 	float width;
 	float height;
 private:

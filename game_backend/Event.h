@@ -18,8 +18,8 @@ public:
 	void setEvent(event_types,std::string);
 	std::vector<Action*> action_list;
 	void addAction(Action*);
-	bool checkEvent();
-	void handleEvent();
+	bool checkEvent(bool);
+	void handleEvent(bool);
 	GameObject* parent;
 private:
 	event_types event_type;

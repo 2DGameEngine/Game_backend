@@ -6,7 +6,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 	int flags=0;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
-	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))){
+	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 		m_bRunning=true;
@@ -37,6 +37,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		GameObject* go;
 		GameObject* go2;
 		Event* e;
+
 		
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1");
 			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2");
@@ -45,6 +46,15 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			GameObjectManager::Instance()->addObject(go);
 			go2->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
+
+		Sound* s=new Sound("effect");
+		s->load("assets/footsteps-4.wav");
+		Sound* s2=new Sound("effect");
+		s2->load("assets/a.wav");
+		SoundManager::Instance()->addSound(s,"walking_sound");
+		SoundManager::Instance()->addSound(s2,"walking_sound1");
+		
+
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
@@ -67,19 +77,26 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
 			e->addAction(new Action("set_velocity_y",go,-4));
 			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("play_sound","walking_sound1"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
 			e->addAction(new Action("set_velocity_y",go,2));
 			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
+
 			e=new Event();
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));
+			e->addAction(new Action("play_sound","walking_sound"));
 			go2->addEvent(e);
 			
 		
 
+
+			
+		
 		return true;
 	}
 	else{
@@ -100,7 +117,11 @@ void Game::update(){
 		GameObjectManager::Instance()->getObjectList()[i]->defaultUpdate();
 	}
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
-		GameObjectManager::Instance()->getObjectList()[i]->update();
+		GameObjectManager::Instance()->getObjectList()[i]->update(false);
+	}
+
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->update(true);
 	}
 	
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
@@ -117,6 +138,7 @@ void Game::clean(){
 void Game::collisionResolution(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		for(std::vector<int>::size_type j = 0; j != i; j++) {
+			
 			GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
 			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
 			if(go1==go2)

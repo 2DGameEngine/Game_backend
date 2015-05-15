@@ -45,7 +45,14 @@
     <ClCompile Include="Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="CollisionManager.cpp">
+=======
+    <ClCompile Include="Sound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+>>>>>>> sound_manager
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,10 +90,17 @@
     <ClInclude Include="ActionTypes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="CollisionPolygon.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManager.h">
+=======
+    <ClInclude Include="Sound.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+>>>>>>> sound_manager
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #ifndef _GAME_
 #define _GAME_
 #include "SDL.h"
+#include "SDL_mixer.h"
 #include <iostream>
 #include <vector>
 #include "InputHandler.h"
@@ -9,6 +10,7 @@
 #include "GameObject.h"
 #include "Event.h"
 #include "Action.h"
+#include "Sound.h"
 class GameObject;
 class Game{
 public:
