@@ -33,9 +33,15 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		dude->addAnimation(new Animation("walk_left",seq3,.8));
 		
 		GameObject* go;
+		GameObject* go2;
 		Event* e;
-		for(int i=0;i<50;i++){
-			go=new GameObject("standing",dude,500/6,378/3,Vector2D((i*500/6 +5)%600,(i*500/6 +5)/600*378/3));
+		
+			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1");
+			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,20),"dude2");
+			GameObjectManager::Instance()->addObject(go);
+			GameObjectManager::Instance()->addObject(go2);
+			go2->add_state_animation_pair("standing","standing");
+			go2->add_state_animation_pair("walk_left","walk_left");
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
@@ -59,8 +65,12 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->addAction(new Action("set_velocity",go,Vector2D(0,2)));
 			e->addAction(new Action("set_state",go,"walk_left"));
 			go->addEvent(e);
-			GameObjectManager::Instance()->addObject(go);
-		}
+			e=new Event();
+			e->setEvent(COLLISION,"dude1");
+			e->addAction(new Action("set_state",go2,"walk_left"));
+			go2->addEvent(e);
+			
+		
 
 		return true;
 	}

@@ -9,12 +9,13 @@
 #include <vector>
 #include "InputHandler.h"
 #include "Model.h"
+#include "CollisionPolygon.h"
 class Model;
 class Event;
 class GameObject{
 public:
-	GameObject(std::string state_id,Model*,int width,int height,Vector2D position);
-	GameObject(std::string state_id,Model*,int width,int height,Vector2D position,std::string);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string);
 	void update();
 	void defaultUpdate();
 	void draw();
@@ -35,6 +36,7 @@ public:
 	std::string object_id;
 	void addEvent(Event* event);
 	bool updated;
+	CollisionPolygon *collision_polygon;
 private:
 	Vector2D position;
 	Vector2D velocity;

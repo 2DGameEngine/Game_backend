@@ -70,6 +70,7 @@
     <ClCompile Include="Action.cpp" />
     <ClCompile Include="ActionTypes.cpp" />
     <ClCompile Include="Animation.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -82,6 +83,8 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="ActionTypes.h" />
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="CollisionPolygon.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventAction.h" />
     <ClInclude Include="Game.h" />

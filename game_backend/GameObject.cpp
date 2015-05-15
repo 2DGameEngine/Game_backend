@@ -56,6 +56,8 @@ else{
 	//acceleration.setY(6);
 	velocity+=acceleration;
 	position+=velocity;
+	collision_polygon->updatePosition(position.getX(),position.getY());
+	std::cout<<(velocity.getX())<<"\n";
 }
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;
@@ -73,23 +75,34 @@ void GameObject::draw(){
 	sourceRectangle.h=model->height_of_frame;
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
-GameObject::GameObject(std::string state,Model* model,int width,int height,Vector2D position){
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 		static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = position;
 		GameObject::model=model;
 		GameObject::velocity = Vector2D(0,0);
-		GameObject::acceleration = Vector2D(.01,.01);
+		GameObject::acceleration = Vector2D(0,0);
 		GameObject::width=width;
 		GameObject::height=height;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
 	}
-GameObject::GameObject(std::string state,Model* model,int width,int height,Vector2D position,std::string object_id){
-	GameObject(state,model,width,height,position);
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+	static int object_num=0;
+		GameObject::state=state;
+		GameObject::position = position;
+		GameObject::model=model;
+		GameObject::velocity = Vector2D(0,0);
+		GameObject::acceleration = Vector2D(0,0);
+		GameObject::width=width;
+		GameObject::height=height;
+		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
+		object_num++;
+		updated=false;
 	GameObject::object_id=object_id;
 }
 void GameObject::addEvent(Event* event){
 	events.push_back(event);
+	event->parent=this;
 }

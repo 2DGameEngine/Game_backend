@@ -45,6 +45,9 @@
     <ClCompile Include="Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h">
@@ -78,6 +81,12 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="ActionTypes.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionPolygon.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
