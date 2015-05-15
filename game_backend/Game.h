@@ -31,6 +31,7 @@ private:
 	bool m_bRunning;
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
+	void collisionResolution();
 };
 typedef Game TheGame;
 #endif

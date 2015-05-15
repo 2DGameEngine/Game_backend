@@ -26,8 +26,27 @@ public:
 	void setVelocity(Vector2D velocity){
 		GameObject::velocity=velocity;
 	}
+	void setVelocityX(float x){
+		GameObject::velocity.setX(x);
+	}
+	void setVelocityY(float y){
+		GameObject::velocity.setY(y);
+	}
 	void setPosition(Vector2D position){
 		GameObject::position=position;
+		collision_polygon->updatePosition(position.getX(),position.getY());
+	}
+	void setPositionX(float new_x){
+		setPosition(Vector2D(new_x,position.getY()));
+	}
+	void setPositionY(float new_y){
+		setPosition(Vector2D(position.getX(),new_y));
+	}
+	void translateX(float x){
+		setPosition(Vector2D(position.getX()+x,position.getY()));
+	}
+	void translateY(float y){
+		setPosition(Vector2D(position.getX(),position.getY()+y));
 	}
 	std::string getAnimationName(std::string state){
 		return state_animation_map[state];
@@ -37,12 +56,12 @@ public:
 	void addEvent(Event* event);
 	bool updated;
 	CollisionPolygon *collision_polygon;
-private:
 	Vector2D position;
 	Vector2D velocity;
 	Vector2D acceleration;
-	int width;
-	int height;
+	float width;
+	float height;
+private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;
 	std::string state;

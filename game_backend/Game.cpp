@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "GameObject.h"
+#include <algorithm>
+#include <cmath>
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
 	if(fullscreen==true)
@@ -37,9 +39,10 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		Event* e;
 		
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1");
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,20),"dude2");
-			GameObjectManager::Instance()->addObject(go);
+			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2");
+			
 			GameObjectManager::Instance()->addObject(go2);
+			GameObjectManager::Instance()->addObject(go);
 			go2->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
 			go->add_state_animation_pair("standing","standing");
@@ -47,22 +50,27 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go->add_state_animation_pair("walk_left","walk_left");
 			e= new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-			e->addAction(new Action("set_velocity",go,Vector2D(1,0)));
+			e->addAction(new Action("set_velocity_x",go,4));
 			e->addAction(new Action("set_state",go,"walk_right"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
-			e->addAction(new Action("set_velocity",go,Vector2D(-1,0)));
+			e->addAction(new Action("set_velocity_x",go,-4));
 			e->addAction(new Action("set_state",go,"walk_left"));
 			go->addEvent(e);
 			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
+			e->addAction(new Action("set_velocity_x",go2,-4));
+			e->addAction(new Action("set_state",go2,"walk_left"));
+			go2->addEvent(e);
+			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
-			e->addAction(new Action("set_velocity",go,Vector2D(0,-1)));
+			e->addAction(new Action("set_velocity_y",go,-4));
 			e->addAction(new Action("set_state",go,"walk_left"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
-			e->addAction(new Action("set_velocity",go,Vector2D(0,2)));
+			e->addAction(new Action("set_velocity_y",go,2));
 			e->addAction(new Action("set_state",go,"walk_left"));
 			go->addEvent(e);
 			e=new Event();
@@ -88,20 +96,78 @@ void Game::render(){
 }
 void Game::update(){
 	InputHandler::Instance()->update();
-	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
-		GameObjectManager::Instance()->getObjectList()[i]->update();
-	}
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size()&&GameObjectManager::Instance()->getObjectList()[i]->updated==false; i++) {
 		GameObjectManager::Instance()->getObjectList()[i]->defaultUpdate();
 	}
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObjectManager::Instance()->getObjectList()[i]->update();
+	}
+	
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObjectManager::Instance()->getObjectList()[i]->updated=false;
 	}
+	collisionResolution();
 }
 void Game::clean(){
 	std::cout<<"cleaning\n";
 	SDL_DestroyWindow(m_pWindow);
 	SDL_DestroyRenderer(m_pRenderer);
 	SDL_Quit();
+}
+void Game::collisionResolution(){
+	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		for(std::vector<int>::size_type j = 0; j != i; j++) {
+			GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
+			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
+			if(go1==go2)
+				continue;
+			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
+				go1->translateX(-go1->velocity.getX());
+				go2->translateX(-go2->velocity.getX());
+				go1->translateY(-go1->velocity.getY());
+				go2->translateY(-go2->velocity.getY());
+				/*float x_overlap=std::min(std::abs(go1->position.getX()+go1->width-go2->position.getX()),std::abs(go2->position.getX()+go2->width-go1->position.getX()));
+				float y_overlap=std::min(std::abs(go1->position.getY()+go1->height-go2->position.getY()),std::abs(go2->position.getY()+go2->height-go1->position.getY()));
+				float go1_x_adj;
+				float go2_x_adj;
+				if(go1->velocity.getX()==go2->velocity.getX() && go1->velocity.getX()==0){
+					go2_x_adj=go1_x_adj=0;
+				}
+				else{
+					go1_x_adj=x_overlap*(std::abs(go1->velocity.getX())/(std::abs(go1->velocity.getX())+std::abs(go2->velocity.getX())));
+					go2_x_adj=x_overlap-go1_x_adj;
+				}
+				
+				float go1_y_adj;
+				float go2_y_adj;
+				if(go1->velocity.getY()==go2->velocity.getY() && go1->velocity.getY()==0){
+					go2_y_adj=go1_y_adj=0;
+				}
+				else{
+					go1_y_adj=y_overlap*(std::abs(go1->velocity.getY())/(std::abs(go1->velocity.getY())+std::abs(go2->velocity.getY())));
+					go2_y_adj=y_overlap-go1_y_adj;
+		
+				}
+				if(go1->position.getX()<go2->position.getX()){
+					go1->translateX(-go1_x_adj);
+					go2->translateX(go2_x_adj);
+				}
+				else{
+					go2->translateX(-go2_x_adj);
+					go1->translateX(go1_x_adj);
+				}
+				if(go1->position.getY()<go2->position.getY()){
+					go1->translateY(-go1_y_adj);
+					go2->translateY(go2_y_adj);
+				}
+				else{
+					go2->translateY(-go2_y_adj);
+					go1->translateY(go1_y_adj);
+				}
+*/
+			}
+
+		}
+	}
 }
 Game* Game::s_pInstance=0;

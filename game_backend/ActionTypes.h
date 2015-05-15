@@ -6,6 +6,8 @@ class GameObject;
 class ActionTypes{
 public:
 	void setVelocity(GameObject*,Vector2D);
+	void setVelocityX(GameObject*,float);
+	void setVelocityY(GameObject*,float);
 	void setPosition(GameObject*,Vector2D);
 	void setState(GameObject*,std::string);
 	static ActionTypes* Instance(){

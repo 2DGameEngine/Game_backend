@@ -18,6 +18,8 @@ bool Event::checkEvent(){
 	}
 	else if(event_type==COLLISION){
 		return CollisionManager::Instance()->isColliding(parent->collision_polygon,subject->collision_polygon);
+		parent->setVelocity(Vector2D(0,0));
+		subject->setVelocity(Vector2D(0,0));
 	}
 
 }

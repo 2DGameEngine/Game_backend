@@ -10,6 +10,7 @@ public:
 		return s_pInstance;
 	}
 	bool isColliding(CollisionPolygon *C1,CollisionPolygon *C2);
+	
 private:
 	static CollisionManager* s_pInstance;
 	

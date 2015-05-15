@@ -11,6 +11,11 @@ public:
 		Action::vector=vector;
 		Action::game_object=game_object;
 	}
+	Action(std::string action_type,GameObject* game_object,float x){
+		Action::action_type=action_type;
+		value=x;
+		Action::game_object=game_object;
+	}
 	Action(std::string action_type,GameObject* game_object,std::string string){
 		Action::action_type=action_type;
 		Action::string=string;
@@ -21,5 +26,6 @@ private:
 	GameObject* game_object;
 	Vector2D vector;
 	std::string string;
+	float value;
 };
 #endif
