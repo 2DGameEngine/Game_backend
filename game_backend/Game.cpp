@@ -39,8 +39,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		Event* e;
 
 		
-			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1");
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2");
+			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
+			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",false);
 			
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
@@ -137,10 +137,13 @@ void Game::clean(){
 }
 void Game::collisionResolution(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
+		if(go1->rigid==true)
+			continue;
 		for(std::vector<int>::size_type j = 0; j != i; j++) {
-			
-			GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
 			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
+			if(go2->rigid==true)
+				continue;
 			if(go1==go2)
 				continue;
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
@@ -148,47 +151,7 @@ void Game::collisionResolution(){
 				go2->translateX(-go2->velocity.getX());
 				go1->translateY(-go1->velocity.getY());
 				go2->translateY(-go2->velocity.getY());
-				/*float x_overlap=std::min(std::abs(go1->position.getX()+go1->width-go2->position.getX()),std::abs(go2->position.getX()+go2->width-go1->position.getX()));
-				float y_overlap=std::min(std::abs(go1->position.getY()+go1->height-go2->position.getY()),std::abs(go2->position.getY()+go2->height-go1->position.getY()));
-				float go1_x_adj;
-				float go2_x_adj;
-				if(go1->velocity.getX()==go2->velocity.getX() && go1->velocity.getX()==0){
-					go2_x_adj=go1_x_adj=0;
-				}
-				else{
-					go1_x_adj=x_overlap*(std::abs(go1->velocity.getX())/(std::abs(go1->velocity.getX())+std::abs(go2->velocity.getX())));
-					go2_x_adj=x_overlap-go1_x_adj;
-				}
-				
-				float go1_y_adj;
-				float go2_y_adj;
-				if(go1->velocity.getY()==go2->velocity.getY() && go1->velocity.getY()==0){
-					go2_y_adj=go1_y_adj=0;
-				}
-				else{
-					go1_y_adj=y_overlap*(std::abs(go1->velocity.getY())/(std::abs(go1->velocity.getY())+std::abs(go2->velocity.getY())));
-					go2_y_adj=y_overlap-go1_y_adj;
-		
-				}
-				if(go1->position.getX()<go2->position.getX()){
-					go1->translateX(-go1_x_adj);
-					go2->translateX(go2_x_adj);
-				}
-				else{
-					go2->translateX(-go2_x_adj);
-					go1->translateX(go1_x_adj);
-				}
-				if(go1->position.getY()<go2->position.getY()){
-					go1->translateY(-go1_y_adj);
-					go2->translateY(go2_y_adj);
-				}
-				else{
-					go2->translateY(-go2_y_adj);
-					go1->translateY(go1_y_adj);
-				}
-*/
 			}
-
 		}
 	}
 }

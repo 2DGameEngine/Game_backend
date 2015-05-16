@@ -14,8 +14,8 @@ class Model;
 class Event;
 class GameObject{
 public:
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position);
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,bool);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string,bool);
 	void update(bool);
 	void defaultUpdate();
 	void draw();
@@ -62,6 +62,7 @@ public:
 	void deleteOb();
 	float width;
 	float height;
+	bool rigid;
 private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;

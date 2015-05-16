@@ -77,7 +77,7 @@ void GameObject::draw(){
 	sourceRectangle.h=model->height_of_frame;
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 		static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = position;
@@ -86,11 +86,12 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::acceleration = Vector2D(0,0);
 		GameObject::width=width;
 		GameObject::height=height;
+		GameObject::rigid=rigid;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
 	}
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 	static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = position;
@@ -99,6 +100,7 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::acceleration = Vector2D(0,0);
 		GameObject::width=width;
 		GameObject::height=height;
+		GameObject::rigid=rigid;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
