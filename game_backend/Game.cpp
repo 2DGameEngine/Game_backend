@@ -53,8 +53,12 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		s2->load("assets/a.wav");
 		SoundManager::Instance()->addSound(s,"walking_sound");
 		SoundManager::Instance()->addSound(s2,"walking_sound1");
-		
-
+		go->add_variable("health",100);
+			e= new Event();
+			e->setEvent(VARIABLE_VALUE_TRIGGER,"dude1","health",80);
+			e->addAction(new Action("play_sound","walking_sound1"));
+			go->addEvent(e);
+			
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
@@ -62,6 +66,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
 			e->addAction(new Action("set_velocity_x",go,4));
 			e->addAction(new Action("set_state",go,"walk_right"));
+			e->addAction(new Action("change_variable",go,"health",80));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
@@ -89,7 +94,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e=new Event();
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));
-			e->addAction(new Action("play_sound","walking_sound"));
+			//e->addAction(new Action("play_sound","walking_sound1"));
 			e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
 			

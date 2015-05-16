@@ -53,13 +53,13 @@ public:
 	}
 	void add_state_animation_pair(std::string,std::string);
 	void add_variable(std::string,float);
+	void change_variable(std::string,float);
 	float return_variable_value(std::string);
 	std::string object_id;
 	void addEvent(Event* event);
 	bool updated;
 	CollisionPolygon *collision_polygon;
 	bool isVariableEqual(std::string,float);
-private:
 	Vector2D position;
 	Vector2D velocity;
 	Vector2D acceleration;
@@ -68,10 +68,11 @@ private:
 	float height;
 	bool rigid;
 	bool is_alive;
+	std::map <std::string,std::pair <float,float>> variable_value_map;
 private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;
-	std::map <std::string,std::pair <float,float>> variable_value_map;
+	
 	std::string state;
 	std::vector<Event*> events;
 	//std::map <std::string,std::pair<std::vector<std::pair<int,int>>,float>> animations;

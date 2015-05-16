@@ -30,6 +30,12 @@ public:
 		Action::string=string;
 		Action::game_object=NULL;
 	}
+	Action(std::string action_type,GameObject* game_object,std::string string,float x){
+		Action::action_type=action_type;
+		Action::string=string;
+		Action::game_object=game_object;
+		value=x;
+	}
 private:
 	std::string action_type;
 	GameObject* game_object;

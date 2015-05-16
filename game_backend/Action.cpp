@@ -23,4 +23,7 @@ void Action::runAction(){
 	else if(action_type=="delete_object"){
 		ActionTypes::Instance()->deleteObject(game_object);
 	}
+	else if(action_type=="change_variable"){
+		ActionTypes::Instance()->changevariable(game_object,string,value);
+	}
 }

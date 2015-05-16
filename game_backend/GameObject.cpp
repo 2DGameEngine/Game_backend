@@ -6,18 +6,24 @@ void GameObject::add_variable(std::string variable_name,float variable_value){
 	variable_value_map[variable_name]=std::make_pair(variable_value,-999999);
 }
 float GameObject::return_variable_value(std::string variable_name){
-	return variable_value_map[variable_name];
+	return variable_value_map[variable_name].first;
+}
+void GameObject::change_variable(std::string variable_name,float variable_value){
+	variable_value_map[variable_name]=std::make_pair(variable_value,variable_value_map[variable_name].second);
 }
 bool GameObject::isVariableEqual(std::string variable_name, float new_variable_value){
-	if(variable_value_map[variable_name].first==variable_value)
+	if(variable_value_map[variable_name].first==new_variable_value)
+	{
+		variable_value_map[variable_name].second=new_variable_value;
 		return true;
+	}
 	else
 		return false;
 }
 void GameObject::defaultUpdate(){
 	velocity=Vector2D(0,0);
 	setState("standing");
-	Mix_HaltChannel(-1);
+	//Mix_HaltChannel(-1);
 }
 void GameObject::update(bool coll_cond){
 	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {
