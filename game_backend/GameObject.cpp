@@ -3,7 +3,7 @@ void GameObject::add_state_animation_pair(std::string state_name,std::string ani
 	state_animation_map[state_name]=animation_name;
 }
 void GameObject::defaultUpdate(){
-	velocity=Vector2D(0,0);
+	velocity.setX(0);
 	setState("standing");
 	Mix_HaltChannel(-1);
 }
@@ -55,8 +55,9 @@ else{
 }
 */
 	//acceleration.setY(6);
-	if(coll_cond==false){
-	velocity+=acceleration;
+	if(coll_cond==false&&object_id!="dude3"){
+		velocity+=acceleration;
+		velocity+=(Vector2D(0,TheGame::Instance()->gravity));
 	position+=velocity;
 	collision_polygon->updatePosition(position.getX(),position.getY());
 	}

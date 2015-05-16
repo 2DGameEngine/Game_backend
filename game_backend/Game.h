@@ -26,6 +26,7 @@ public:
 		}
 		return s_pInstance;
 	}
+	float gravity;
 	void deleteObjects();
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 private:
@@ -35,6 +36,7 @@ private:
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
 	void collisionResolution();
+	
 };
 typedef Game TheGame;
 #endif

@@ -4,6 +4,7 @@
 #include <cmath>
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
+	gravity=.1;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
@@ -36,15 +37,18 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		
 		GameObject* go;
 		GameObject* go2;
+		GameObject* go3;
 		Event* e;
 
 		
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
 			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true);
-			
+			go3=new GameObject("standing",dude,5000/6,3780/3,Vector2D(0,200),"dude3",true);
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
+			GameObjectManager::Instance()->addObject(go3);
 			go2->add_state_animation_pair("standing","standing");
+			go3->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
 
 		Sound* s=new Sound("effect");
@@ -90,14 +94,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
-			e->addAction(new Action("delete_object",go));
+			//e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
-			
-		
-
-
-			
-		
 		return true;
 	}
 	else{
@@ -151,19 +149,29 @@ void Game::clean(){
 void Game::collisionResolution(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
-		if(go1->rigid==true||go1->is_alive==false)
+		if(go1->rigid==false||go1->is_alive==false)
 			continue;
 		for(std::vector<int>::size_type j = 0; j != i; j++) {
 			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
-			if(go2->rigid==true||go2->is_alive==false)
+			if(go2->rigid==false||go2->is_alive==false)
 				continue;
 			if(go1==go2)
 				continue;
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
-				go1->translateX(-go1->velocity.getX());
+				/*go1->translateX(-go1->velocity.getX());
 				go2->translateX(-go2->velocity.getX());
 				go1->translateY(-go1->velocity.getY());
-				go2->translateY(-go2->velocity.getY());
+				go2->translateY(-go2->velocity.getY());*/
+				go1->translateX(-(go1->velocity.getX()+go1->acceleration.getX()));
+				go2->translateX(-(go2->velocity.getX()+go2->acceleration.getX()));
+				if(go1->object_id!="dude3")
+					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()+1));
+				else
+					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()));
+				if(go1->object_id!="dude3")
+					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()+1));
+				else
+					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));
 			}
 		}
 	}
