@@ -90,6 +90,7 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
+		is_alive=true;
 	}
 GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 	static int object_num=0;
@@ -104,9 +105,13 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
+		is_alive=true;
 	GameObject::object_id=object_id;
 }
 void GameObject::addEvent(Event* event){
 	events.push_back(event);
 	event->parent=this;
+}
+void GameObject::deleteOb(){
+	GameObjectManager::Instance()->addObjectToDelete(object_id);
 }

@@ -40,7 +40,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 
 		
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",false);
+			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true);
 			
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
@@ -90,6 +90,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
+			e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
 			
 		
@@ -107,6 +108,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 void Game::render(){
 	SDL_RenderClear(m_pRenderer);
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
+			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->draw();
 	}
 	SDL_RenderPresent(m_pRenderer);
@@ -114,21 +117,31 @@ void Game::render(){
 void Game::update(){
 	InputHandler::Instance()->update();
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size()&&GameObjectManager::Instance()->getObjectList()[i]->updated==false; i++) {
+		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
+			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->defaultUpdate();
 	}
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
+			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->update(false);
 	}
 
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
+			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->update(true);
 	}
-	
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
+		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
+			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->updated=false;
 	}
 	collisionResolution();
+	deleteObjects();
+	
 }
+
 void Game::clean(){
 	std::cout<<"cleaning\n";
 	SDL_DestroyWindow(m_pWindow);
@@ -138,11 +151,11 @@ void Game::clean(){
 void Game::collisionResolution(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
-		if(go1->rigid==true)
+		if(go1->rigid==true||go1->is_alive==false)
 			continue;
 		for(std::vector<int>::size_type j = 0; j != i; j++) {
 			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
-			if(go2->rigid==true)
+			if(go2->rigid==true||go2->is_alive==false)
 				continue;
 			if(go1==go2)
 				continue;
@@ -154,5 +167,12 @@ void Game::collisionResolution(){
 			}
 		}
 	}
+}
+void Game::deleteObjects(){
+	std::vector<GameObject*>::iterator it;
+	for ( it = GameObjectManager::Instance()->getObjectsToDeleteList().begin(); it != GameObjectManager::Instance()->getObjectsToDeleteList().end();it++ ){
+		(*it)->is_alive=false;
+	}
+	GameObjectManager::Instance()->getObjectsToDeleteList().clear();
 }
 Game* Game::s_pInstance=0;

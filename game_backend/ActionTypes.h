@@ -13,6 +13,7 @@ public:
 	void setPosition(GameObject*,Vector2D);
 	void setState(GameObject*,std::string);
 	void playSound(std::string);
+	void deleteObject(GameObject* game_object);
 	static ActionTypes* Instance(){
 		if(s_pInstance==0){
 			s_pInstance=new ActionTypes();
