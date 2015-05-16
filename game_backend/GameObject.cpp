@@ -2,6 +2,18 @@
 void GameObject::add_state_animation_pair(std::string state_name,std::string animation_name){
 	state_animation_map[state_name]=animation_name;
 }
+void GameObject::add_variable(std::string variable_name,float variable_value){
+	variable_value_map[variable_name]=std::make_pair(variable_value,-999999);
+}
+float GameObject::return_variable_value(std::string variable_name){
+	return variable_value_map[variable_name];
+}
+bool GameObject::isVariableEqual(std::string variable_name, float new_variable_value){
+	if(variable_value_map[variable_name].first==variable_value)
+		return true;
+	else
+		return false;
+}
 void GameObject::defaultUpdate(){
 	velocity=Vector2D(0,0);
 	setState("standing");

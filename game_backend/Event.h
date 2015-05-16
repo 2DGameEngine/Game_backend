@@ -9,8 +9,8 @@ class Action;
 enum event_types{
 		BUTTON_CLICK,
 		MOUSE_MOVE,
-		VARIABLE_VALUE,
-		COLLISION
+		COLLISION,
+		VARIABLE_VALUE_TRIGGER
 	};
 class Event{
 public:
