@@ -2,6 +2,8 @@
 #include "GameObject.h"
 #include <algorithm>
 #include <cmath>
+#include "FileManager.h"
+
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
 	if(fullscreen==true)
@@ -37,7 +39,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		GameObject* go;
 		GameObject* go2;
 		Event* e;
-
 		
 			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
 			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true);
@@ -85,7 +86,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->addAction(new Action("set_state",go,"walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
-
 			e=new Event();
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));

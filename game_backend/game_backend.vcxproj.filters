@@ -45,6 +45,7 @@
     <ClCompile Include="Event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <ClCompile Include="CollisionManager.cpp">
 =======
@@ -53,6 +54,12 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
 >>>>>>> sound_manager
+=======
+    <ClCompile Include="FileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Jzon.cpp">
+>>>>>>> Stashed changes
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,6 +97,7 @@
     <ClInclude Include="ActionTypes.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <ClInclude Include="CollisionPolygon.h">
       <Filter>Source Files</Filter>
@@ -101,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="SoundManager.h">
 >>>>>>> sound_manager
+=======
+    <ClInclude Include="dirent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Jzon.h">
+>>>>>>> Stashed changes
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
