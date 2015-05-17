@@ -11,9 +11,11 @@
 #include "Event.h"
 #include "Action.h"
 #include "Sound.h"
+#include "Camera.h"
 class GameObject;
 class Game{
 public:
+	Camera* camera;
 	bool init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen);
 	void render();
 	void update();
@@ -34,6 +36,7 @@ private:
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
 	void collisionResolution();
+
 };
 typedef Game TheGame;
 #endif
