@@ -230,13 +230,13 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			mheight=0;
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
 			if(tmpJSON.type == "string"){
-				mname.assign(tmpJSON.stringVal);
+				mname.assign(tmpJSON.retVal.stringVal);
 				std::cout<<"ModelName:"<<mname<<"\n";
 			}
 			Models[mname]=new Model();
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Sprite");
 			if(tmpJSON.type == "string"){
-				sprite+=tmpJSON.stringVal;
+				sprite+=tmpJSON.retVal.stringVal;
 				std::cout<<"Sprite:"<<sprite<<"\n";
 			}
 			Models[mname]->load_texture(sprite);
@@ -267,7 +267,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				speed=0;
 				tmpJSON = FileManager::Instance()->returnVALUE(itt->second, "Name");
 				if(tmpJSON.type == "string"){
-					statesName.assign(tmpJSON.stringVal);
+					statesName.assign(tmpJSON.retVal.stringVal);
 				}
 				std::cout<<"StateName:"<<statesName<<"\n";
 				tmpJSON = FileManager::Instance()->returnVALUE(itt->second, "Speed");
@@ -319,17 +319,17 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			soundtype="effect";
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
 			if(tmpJSON.type == "string"){
-				soundname.assign(tmpJSON.stringVal);
+				soundname.assign(tmpJSON.retVal.stringVal);
 				std::cout<<"SoundName:"<<soundname<<"\n";
 			}
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "File");
 			if(tmpJSON.type == "string"){
-				soundfile+=tmpJSON.stringVal;
+				soundfile+=tmpJSON.retVal.stringVal;
 				std::cout<<"File:"<<soundfile<<"\n";
 			}
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Music");
 			if(tmpJSON.type == "string"){
-				soundtype=tmpJSON.stringVal;
+				soundtype=tmpJSON.retVal.stringVal;
 				std::cout<<"soundtype:"<<soundtype<<"\n";
 			}
 			s = new Sound(soundtype);
@@ -355,7 +355,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		Event* e;
 		source = "\.\.\\json\\objects";
 		float width=0, height=0, pos_X=0, pos_Y=0,vel_X=0,vel_Y=0,acc_X=0,acc_Y=0;
-		std::string obname = "", defaultAnim="",rigid_value="false";
+		std::string obname = "", defaultAnim="",rigid_value="false", static_value="false";
 		bool rigid=false, staticV=false;
 		js = FileManager::Instance()->initializeObjects(source.c_str());
 		for(std::map<int, retJSON>::const_iterator it = js.begin(); it != js.end(); ++it){
@@ -427,29 +427,29 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			rigid=false;
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Rigid");
 			if(tmpJSON.type == "string"){
-				rigid_value.assign(tmpJSON.stringVal);
+				rigid_value.assign(tmpJSON.retVal.stringVal);
 			if(rigid_value=="true")
 				rigid=true;
 			}
 			staticV=false;
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Static");
 			if(tmpJSON.type == "string"){
-				static_value.assign(tmpJSON.stringVal);
+				static_value.assign(tmpJSON.retVal.stringVal);
 			if(static_value=="true")
 				staticV=true;
 			}
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
 			if(tmpJSON.type == "string"){
-				obname.assign(tmpJSON.stringVal);
+				obname.assign(tmpJSON.retVal.stringVal);
 			}
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelName");
 			if(tmpJSON.type == "string"){
-				mname.assign(tmpJSON.stringVal);
+				mname.assign(tmpJSON.retVal.stringVal);
 			}
 			std::cout<<"ModelName:"<<mname<<"\n";
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelDefaultAnim");
 			if(tmpJSON.type == "string"){
-				defaultAnim.assign(tmpJSON.stringVal);
+				defaultAnim.assign(tmpJSON.retVal.stringVal);
 			}
 			std::cout<<"defaultAnim:"<<defaultAnim<<"\n";
 			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid);
@@ -460,7 +460,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			}
 			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
 				if(itt->second.type == "string"){
-					defaultAnim.assign(itt->second.stringVal);
+					defaultAnim.assign(itt->second.retVal.stringVal);
 				}
 				std::cout<<"AnimState:"<<defaultAnim<<"\n";
 				go->add_state_animation_pair(defaultAnim,defaultAnim);
