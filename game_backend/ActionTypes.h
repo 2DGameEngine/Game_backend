@@ -14,6 +14,7 @@ public:
 	void setState(GameObject*,std::string);
 	void playSound(std::string);
 	void deleteObject(GameObject* game_object);
+	void changevariable(GameObject*,std::string,float);
 	static ActionTypes* Instance(){
 		if(s_pInstance==0){
 			s_pInstance=new ActionTypes();

@@ -1,7 +1,10 @@
 #include "Action.h"
 void Action::runAction(){
-	if(game_object!=NULL)
+	GameObject* game_object;
+	if(game_object_id !=""){
+		game_object=GameObjectManager::Instance()->getObject(game_object_id);
 		game_object->updated=true;
+	}
 	if(action_type=="set_velocity"){
 		ActionTypes::Instance()->setVelocity(game_object,vector);
 	}
@@ -22,5 +25,8 @@ void Action::runAction(){
 	}
 	else if(action_type=="delete_object"){
 		ActionTypes::Instance()->deleteObject(game_object);
+	}
+	else if(action_type=="change_variable"){
+		ActionTypes::Instance()->changevariable(game_object,string,value);
 	}
 }
