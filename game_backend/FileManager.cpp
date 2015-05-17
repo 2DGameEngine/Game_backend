@@ -29,14 +29,21 @@ std::map<int, retJSON> FileManager::initializeObjects(const char* source){
 }
 
 struct retJSON FileManager::parseJSON(Jzon::Node &node){
-	std::cout<<"Inside"<<std::endl;
+	//std::cout<<"Inside"<<std::endl;
 	retJSON ret;
 	ret.type = "undefined";
 	std::map<std::string, retJSON> mapVal;
 	if (node.IsValue()){
+		//std::cout<<"Is Value\n";
 		switch (node.AsValue().GetValueType()){
-		case Jzon::Value::VT_NULL   : ret.type = "null";return ret;
-		case Jzon::Value::VT_STRING : std::cout<<node.ToString().c_str()<<std::endl;ret.type = "string"; ret.retVal.stringVal=(char*)node.ToString().c_str();return ret;
+		case Jzon::Value::VT_NULL   : 
+			ret.type = "null";
+			return ret;
+		case Jzon::Value::VT_STRING : 
+			std::cout<<node.ToString().c_str()<<std::endl;
+			ret.type = "string"; 
+			strcpy(ret.retVal.stringVal,(char*)node.ToString().c_str());
+			return ret;
 			case Jzon::Value::VT_NUMBER : std::cout<<node.ToFloat()<<std::endl;
 				if(node.ToFloat() == (float)node.ToInt()){
 					ret.type = "int"; ret.retVal.intVal=node.ToInt();
@@ -50,17 +57,19 @@ struct retJSON FileManager::parseJSON(Jzon::Node &node){
 		}
 	}
 	else if (node.IsArray()){
+		//std::cout<<"Is Array\n";
 		Jzon::Array &stuff = node.AsArray();
 		ret.type = "array";
-		int i;
-		Jzon::Array::iterator it = stuff.begin();
-		for (i=0; it != stuff.end(); ++it, i++){
-			char st[2];
+		int i=0;
+		for (Jzon::Array::iterator it = stuff.begin(); it != stuff.end(); ++it, i++){
+			char st[4];
+			std::cout<<itoa(i,st,10)<<" ";
 			ret.mapVal[itoa(i,st,10)] = FileManager::parseJSON((*it));
 		}
 		return ret;
 	}
 	else if (node.IsObject()){
+		//std::cout<<"Is object\n";
 		Jzon::Object stuff = node.AsObject();
 		ret.type = "object";
 		for (Jzon::Object::iterator it = stuff.begin(); it != stuff.end(); ++it){
