@@ -129,6 +129,44 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			}
 		}
 
+
+		//Initializing the sound
+
+		std::string soundname="", soundfile="", soundtype="";
+		source = "\.\.\\json\\sounds";
+		Sound *s;
+		js = FileManager::Instance()->initializeObjects(source.c_str());
+		for(std::map<int, retJSON>::const_iterator it = js.begin(); it != js.end(); ++it){
+			soundname="";
+			soundfile="assets\\";
+			soundtype="effect";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
+			if(tmpJSON.type == "string"){
+				soundname.assign(tmpJSON.stringVal);
+				std::cout<<"SoundName:"<<soundname<<"\n";
+			}
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "File");
+			if(tmpJSON.type == "string"){
+				soundfile+=tmpJSON.stringVal;
+				std::cout<<"File:"<<soundfile<<"\n";
+			}
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Music");
+			if(tmpJSON.type == "string"){
+				soundtype=tmpJSON.stringVal;
+				std::cout<<"soundtype:"<<soundtype<<"\n";
+			}
+			s = new Sound(soundtype);
+			s->load(soundfile);
+			SoundManager::Instance()->addSound(s,soundname);
+		}
+		/*Sound* s=new Sound("effect");
+		s->load("assets/footsteps-4.wav");
+		Sound* s2=new Sound("effect");
+		s2->load("assets/a.wav");
+		SoundManager::Instance()->addSound(s,"walking_sound");
+		SoundManager::Instance()->addSound(s2,"walking_sound1");*/
+
+
 		//Initializing the objects from object json
 
 		GameObject* go;
@@ -279,12 +317,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go2->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
 
-		Sound* s=new Sound("effect");
-		s->load("assets/footsteps-4.wav");
-		Sound* s2=new Sound("effect");
-		s2->load("assets/a.wav");
-		SoundManager::Instance()->addSound(s,"walking_sound");
-		SoundManager::Instance()->addSound(s2,"walking_sound1");
 		
 
 			go->add_state_animation_pair("standing","standing");
