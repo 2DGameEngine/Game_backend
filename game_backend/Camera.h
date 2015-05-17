@@ -3,10 +3,11 @@
 #include "SDL.h"
 class Camera{
 public:
-	Camera(float width,float height,Vector2D position,std::string type,std::string linkedObject);
+	Camera(float width,float height,Vector2D position,std::string type,std::string linkedObject,Vector2D offset);
 	float width;
 	float height;
 	Vector2D position;
+	Vector2D offset;
 	std::string type;
 	std::string linkedObject;
 	void setWidth(float new_width);

@@ -24,10 +24,11 @@ Vector2D Camera::getPosition(){
 		return GameObjectManager::Instance()->getObject(linkedObject)->position;
 	}
 }
-Camera::Camera(float width,float height,Vector2D position,std::string type,std::string linkedObject){
+Camera::Camera(float width,float height,Vector2D position,std::string type,std::string linkedObject,Vector2D offset){
 	Camera::width=width;
 	Camera::height=height;
 	Camera::position=position;
 	Camera::type=type;
 	Camera::linkedObject=linkedObject;
+	Camera::offset=offset;
 }
