@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string.h>
 #include "FileManager.h"
+#include "Camera.h"
 
 float editorParserRec(std::map<std::string, retJSON> ast){
 	struct retJSON tmpJSON;
@@ -138,11 +139,15 @@ bool editorParser(struct retJSON ast){
 
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
+	gravity=.1;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
+
+		camera = new Camera(500,500,Vector2D(50,50),"static","dude1",Vector2D(50,50));
+		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
 		m_bRunning=true;
 		/*Model* dude=new Model();
 		dude->load_texture("assets/dude.png");
@@ -302,6 +307,11 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		//Initializing the objects from object json
 
 		GameObject* go;
+		GameObject* go2;
+		GameObject* go3;
+		GameObject* go1;
+		GameObject* go21;
+		GameObject* go31;
 		Event* e;
 		source = "\.\.\\json\\objects";
 		float width=0, height=0, pos_X=0, pos_Y=0,vel_X=0,vel_Y=0,acc_X=0,acc_Y=0;
@@ -441,58 +451,76 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		GameObject* go2;
 		Event* e;
 		
-			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true);
-			
+
+
+			go=new GameObject("standing",dude,500/6,378/3,20,20,0,0,0,0,"dude1",true,false);
+			go2=new GameObject("standing",dude,500/6,378/3,200,200,0,0,0,0,"dude2",true,false);
+			go3=new GameObject("standing",dude,5000/6,3780/3,0,200,0,0,0,0,"dude3",true,true);
+
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
-			go2->add_state_animation_pair("standing","standing");
+			GameObjectManager::Instance()->addObject(go3);
+			go->add_state_animation_pair("standing","standing");
+			go->add_state_animation_pair("walk_left","walk_left");
+			go3->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
+			go2->add_state_animation_pair("standing","standing");
+			go1=new GameObject("standing",dude,500/6,378/3,600,-30,0,0,0,0,"dude4",true,false);
+			go21=new GameObject("standing",dude,500/6,378/3,200,0,0,0,0,0,"dude5",true,false);
+			go31=new GameObject("standing",dude,500/6,378/3,800,0,0,0,0,0,"dude6",true,false);
+			GameObjectManager::Instance()->addObject(go21);
+			GameObjectManager::Instance()->addObject(go1);
+			GameObjectManager::Instance()->addObject(go31);
+			
+			go21->add_state_animation_pair("standing","standing");
+			go31->add_state_animation_pair("standing","standing");
+			go1->add_state_animation_pair("standing","standing");
 
-		
-
+		go->add_variable("health",100);
+			e= new Event();
+			e->setEvent(VARIABLE_VALUE_TRIGGER,"dude1","health",80);
+			e->addAction(new Action("play_sound","walking_sound1"));
+			go->addEvent(e);
+			
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
 			e= new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-			e->addAction(new Action("set_velocity_x",go,4));
-			e->addAction(new Action("set_state",go,"walk_right"));
+			e->addAction(new Action("set_velocity_x","dude1",4));
+			e->addAction(new Action("set_state","dude1","walk_right"));
+			e->addAction(new Action("change_variable","dude1","health",80));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
-			e->addAction(new Action("set_velocity_x",go,-4));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_x","dude1",-4));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-			e->addAction(new Action("set_velocity_x",go2,-4));
-			e->addAction(new Action("set_state",go2,"walk_left"));
+			e->addAction(new Action("set_velocity_x","dude2",-4));
+			e->addAction(new Action("set_state","dude2","walk_left"));
 			go2->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
-			e->addAction(new Action("set_velocity_y",go,-4));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_y","dude1",-4));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound1"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
-			e->addAction(new Action("set_velocity_y",go,2));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_y","dude1",2));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(COLLISION,"dude1");
-			e->addAction(new Action("set_state",go2,"walk_left"));
-			e->addAction(new Action("play_sound","walking_sound"));
-			e->addAction(new Action("delete_object",go));
+
+			e->addAction(new Action("set_state","dude2","walk_left"));
+			//e->addAction(new Action("play_sound","walking_sound1"));
+
+			//e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
-			
-		
-
-
-			
-		
 		return true;
 	}
 	else{
@@ -544,24 +572,155 @@ void Game::clean(){
 	SDL_Quit();
 }
 void Game::collisionResolution(){
+	std::cout<<"checking"<<"\n";
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
-		if(go1->rigid==true||go1->is_alive==false)
-			continue;
+			if(go1->rigid==false||go1->is_alive==false)
+				continue;
 		for(std::vector<int>::size_type j = 0; j != i; j++) {
 			GameObject* go2=GameObjectManager::Instance()->getObjectList()[j];
-			if(go2->rigid==true||go2->is_alive==false)
+			if(go2->rigid==false||go2->is_alive==false)
 				continue;
-			if(go1==go2)
-				continue;
+			/*if(go1==go2)
+				continue;*/
+			std::cout<<go1->object_id+" checks "+go2->object_id<<"\n";
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
-				go1->translateX(-go1->velocity.getX());
-				go2->translateX(-go2->velocity.getX());
-				go1->translateY(-go1->velocity.getY());
-				go2->translateY(-go2->velocity.getY());
+				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
+				/*if(std::abs(go1->velocity.getX())+std::abs(go2->velocity.getX())>std::abs(go1->velocity.getY())+std::abs(go2->velocity.getY())){
+					go1->translateX(-go1->velocity.getX());
+					go2->translateX(-go2->velocity.getX());
+				}
+				else{
+					go1->translateY(-go1->velocity.getY());
+					go2->translateY(-go2->velocity.getY());
+				}*/
+				/*go1->translateX(-(go1->velocity.getX()+go1->acceleration.getX()));
+				go2->translateX(-(go2->velocity.getX()+go2->acceleration.getX()));
+				if(go1->object_id!="dude3")
+					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()));
+				else
+					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()));
+				if(go1->object_id!="dude3")
+					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));
+				else
+					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));*/
+				float x_overlap=std::min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
+				float y_overlap=std::min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
+				if(x_overlap<y_overlap){
+					GameObject* left_go;
+					GameObject* right_go;
+					if(go1->getPosition().getX()<go2->getPosition().getX()){
+						left_go=go1;
+						right_go=go2;
+					}
+					else{
+						left_go=go2;
+						right_go=go1;
+					}
+					if(go1->is_static==true||go1->getVelocity().getX()==0){
+						go2->translateX(-go2->velocity.getX());
+						go2->setVelocityX(0);
+					}
+					else if(go2->is_static==true||go2->getVelocity().getX()==0){
+						go1->translateX(-go1->velocity.getX());
+						go1->setVelocityX(0);
+					}
+					else if(left_go->velocity.getX()>0&&right_go->getVelocity().getX()<0){
+						left_go->translateX(-left_go->getVelocity().getX());
+						right_go->translateX(-right_go->getVelocity().getX());
+						left_go->setVelocityX(0);
+						right_go->setVelocityX(0);
+					}
+					else if(left_go->velocity.getX()<0&&right_go->getVelocity().getX()>0){
+						
+					}
+					else if(left_go->velocity.getX()>0&&right_go->getVelocity().getX()>0){
+						left_go->translateX(-x_overlap);
+						left_go->setVelocityX(0);
+					}
+					else if(left_go->velocity.getX()<0&&right_go->getVelocity().getX()<0){
+						right_go->translateX(x_overlap);
+						right_go->setVelocityX(0);
+					}
+				}
+				else{
+					GameObject* top_go;
+					GameObject* bot_go;
+					if(go1->getPosition().getY()<go2->getPosition().getY()){
+						top_go=go1;
+						bot_go=go2;
+					}
+					else{
+						bot_go=go1;
+						top_go=go2;
+					}
+					if(go1->is_static==true||go1->getVelocity().getY()==0){
+						go2->translateY(-go2->velocity.getY());
+						go2->setVelocityY(0);
+					}
+					else if(go2->is_static==true||go2->getVelocity().getY()==0){
+						go1->translateY(-go1->velocity.getY());
+						go1->setVelocityY(0);
+					}
+					else if(top_go->velocity.getY()>0&&bot_go->getVelocity().getY()<0){
+						top_go->translateY(-top_go->getVelocity().getY());
+						bot_go->translateY(-bot_go->getVelocity().getY());
+						top_go->setVelocityY(0);
+						bot_go->setVelocityY(0);
+					}
+					else if(top_go->velocity.getY()<0&&bot_go->getVelocity().getY()>0){
+						
+					}
+					else if(top_go->velocity.getY()>0&&bot_go->getVelocity().getY()>0){
+						top_go->translateY(-y_overlap);
+						top_go->setVelocityY(0);
+					}
+					else if(top_go->velocity.getY()<0&&bot_go->getVelocity().getY()<0){
+						bot_go->translateY(y_overlap);
+						bot_go->setVelocityY(0);
+					}
+				}
+				/*float go1_x_adj;
+				float go2_x_adj;
+				if(go1->velocity.getX()==go2->velocity.getX() && go1->velocity.getX()==0){
+					go2_x_adj=go1_x_adj=0;
+				}
+				else{
+					go1_x_adj=x_overlap*(std::abs(go1->velocity.getX())/(std::abs(go1->velocity.getX())+std::abs(go2->velocity.getX())));
+					go2_x_adj=x_overlap-go1_x_adj;
+				}
+				
+				float go1_y_adj;
+				float go2_y_adj;
+				if(go1->velocity.getY()==go2->velocity.getY() && go1->velocity.getY()==0){
+					go2_y_adj=go1_y_adj=0;
+				}
+				else{
+					go1_y_adj=y_overlap*(std::abs(go1->velocity.getY())/(std::abs(go1->velocity.getY())+std::abs(go2->velocity.getY())));
+					go2_y_adj=y_overlap-go1_y_adj;
+		
+				}
+				if(go1->position.getX()<go2->position.getX()){
+					go1->translateX(-go1_x_adj);
+					go2->translateX(go2_x_adj);
+				}
+				else{
+					go2->translateX(-go2_x_adj);
+					go1->translateX(go1_x_adj);
+				}
+				if(go1->position.getY()<go2->position.getY()){
+					go1->translateY(-go1_y_adj);
+					go2->translateY(go2_y_adj);
+				}
+				else{
+					go2->translateY(-go2_y_adj);
+					go1->translateY(go1_y_adj);
+				}*/
 			}
+			
 		}
 	}
+	std::cout<<"resolved"<<"\n";
 }
 void Game::deleteObjects(){
 	std::vector<GameObject*>::iterator it;

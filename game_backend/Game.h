@@ -11,9 +11,11 @@
 #include "Event.h"
 #include "Action.h"
 #include "Sound.h"
+#include "Camera.h"
 class GameObject;
 class Game{
 public:
+	Camera* camera;
 	bool init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen);
 	void render();
 	void update();
@@ -26,6 +28,7 @@ public:
 		}
 		return s_pInstance;
 	}
+	float gravity;
 	void deleteObjects();
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 private:
