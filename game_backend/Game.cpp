@@ -333,4 +333,12 @@ void Game::deleteObjects(){
 	}
 	GameObjectManager::Instance()->getObjectsToDeleteList().clear();
 }
+float Game::get_variable(std::string object_id,std::string variable_name){
+	GameObject* game_object=GameObjectManager::Instance()->getObject(object_id);
+	return game_object->return_variable_value(variable_name);
+}
+void Game::set_variable(std::string object_id,std::string variable_name,float variable_value){
+	GameObject* game_object=GameObjectManager::Instance()->getObject(object_id);
+	game_object->change_variable(variable_name,variable_value);
+}
 Game* Game::s_pInstance=0;

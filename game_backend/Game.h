@@ -38,6 +38,8 @@ private:
 	SDL_Window* m_pWindow;
 	SDL_Renderer* m_pRenderer;
 	void collisionResolution();
+	float get_variable(std::string,std::string);
+	void set_variable(std::string,std::string,float);
 };
 typedef Game TheGame;
 #endif
