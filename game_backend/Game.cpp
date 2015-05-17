@@ -11,7 +11,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
-		camera = new Camera(1000,1000,Vector2D(0,0),"static","dude1");
+
+		camera = new Camera(500,500,Vector2D(50,50),"static","dude1",Vector2D(50,50));
 		m_bRunning=true;
 		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
 		Model* dude=new Model();
