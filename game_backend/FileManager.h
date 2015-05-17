@@ -20,7 +20,7 @@ union retType
     int intVal;
 	float floatVal;
 	bool boolVal;
-	char* stringVal;
+	char stringVal[50];
 };
 
 struct retJSON{

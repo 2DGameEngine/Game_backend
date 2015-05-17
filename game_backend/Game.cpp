@@ -5,13 +5,38 @@
 #include <string.h>
 #include "FileManager.h"
 #include "Camera.h"
+#include <string>
+#include <sstream>
+
+std::vector<std::string> split(std::string str, char delimiter) {
+  std::vector<std::string> internalL;
+  std::stringstream ss(str); // Turn the string into a stream.
+  std::string tok;
+  std::cout<<"Split "<<str<<"=";
+  while(std::getline(ss, tok, delimiter)) {
+	  std::cout<<tok<<" ";
+    internalL.push_back(tok);
+  }
+  std::cout<<"\n";
+  return internalL;
+}
+
+float get_variable(std::string object_id,std::string variable_name){
+	return GameObjectManager::Instance()->getObject(object_id)->return_variable_value(variable_name);
+}
+
+void set_variable(std::string object_id,std::string variable_name, float op2){
+	GameObjectManager::Instance()->getObject(object_id)->change_variable(variable_name, op2);
+}
 
 float editorParserRec(std::map<std::string, retJSON> ast){
 	struct retJSON tmpJSON;
-	std::string operand, strFn;
+	std::string operand;
+	char *strFn;
 	float op1, op2;
 	tmpJSON = ast["0"];
 	if(tmpJSON.type == "string"){
+		std::cout<<tmpJSON.retVal.stringVal<<"\n";
 		operand = tmpJSON.retVal.stringVal;
 	}
 	else
@@ -21,8 +46,9 @@ float editorParserRec(std::map<std::string, retJSON> ast){
 		op1 = editorParserRec(tmpJSON.mapVal);
 	}
 	else if(tmpJSON.type == "string"){
-		strFn = tmpJSON.retVal.stringVal;
-		op1 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+		std::cout<<tmpJSON.retVal.stringVal<<"\n";
+		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
+		op1 = get_variable(splitS[0], splitS[1]);
 	}
 	else if(tmpJSON.type == "int")
 		op1 = tmpJSON.retVal.intVal;
@@ -33,8 +59,9 @@ float editorParserRec(std::map<std::string, retJSON> ast){
 		op2 = editorParserRec(tmpJSON.mapVal);
 	}
 	else if(tmpJSON.type == "string"){
-		strFn = tmpJSON.retVal.stringVal;
-		op2 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+		std::cout<<tmpJSON.retVal.stringVal<<"\n";
+		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
+		op2 = get_variable(splitS[0], splitS[1]);
 	}
 	else if(tmpJSON.type == "int")
 		op2 = tmpJSON.retVal.intVal;
@@ -55,86 +82,99 @@ float editorParserRec(std::map<std::string, retJSON> ast){
 	return 0;
 }
 
-bool editorParser(struct retJSON ast){
+bool editorParser(std::map<std::string, retJSON> ast){
 	struct retJSON tmpJSON;
 	std::string operand;
+	char* strFn;
 	float op1, op2;
-	tmpJSON = FileManager::Instance()->returnVALUE(ast, "0");
+	tmpJSON = ast["0"];
 	if(tmpJSON.type == "string"){
+		std::cout<<tmpJSON.retVal.stringVal<<"\n";
 		operand = tmpJSON.retVal.stringVal;
 	}
 	else
 		return false;
-	tmpJSON = FileManager::Instance()->returnVALUE(ast, "1");
+	tmpJSON = ast["1"];
 	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 		op1 = editorParserRec(tmpJSON.mapVal);
 	}
 	else if(tmpJSON.type == "string"){
-		strFn = tmpJSON.retVal.stringVal;
-		op1 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
+		op1 = get_variable(splitS[0], splitS[1]);
 	}
 	else if(tmpJSON.type == "int")
 		op1 = tmpJSON.retVal.intVal;
 	else if(tmpJSON.type == "float")
 		op1 = tmpJSON.retVal.floatVal;
-	tmpJSON = FileManager::Instance()->returnVALUE(ast, "2");
+	tmpJSON = ast["2"];
 	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 		op2 = editorParserRec(tmpJSON.mapVal);
 	}
 	else if(tmpJSON.type == "string"){
-		strFn = tmpJSON.retVal.stringVal;
-		op2 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+		std::cout<<tmpJSON.retVal.stringVal<<"\n";
+		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
+		op2 = get_variable(splitS[0], splitS[1]);
 	}
 	else if(tmpJSON.type == "int")
 		op2 = tmpJSON.retVal.intVal;
 	else if(tmpJSON.type == "float")
 		op2 = tmpJSON.retVal.floatVal;
-	if(mapVal["0"]=="Assign"){
-		strFn = tmpJSON.retVal.stringVal;
-		set_variable(strtok(strFn, "."), strtok(NULL, "."), op2);
+	if(operand=="Assign"){
+		std::vector<std::string> splitS = split(ast["1"].retVal.stringVal, '.');
+		set_variable(splitS[0], splitS[1], op2);
 		return true;
 	}
-	else if(mapVal["0"]=="if"){
+	else if(operand=="if"){
 		if(op1==op2){
-			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			tmpJSON = ast["3"];
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				return editorParser(tmpJSON.mapVal);
 			}
 		}
 	}
-	else if(mapVal["0"]=="ifL"){
+	else if(operand=="ifL"){
 		if(op1<op2){
-			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			tmpJSON = ast["3"];
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				return editorParser(tmpJSON.mapVal);
 			}
 		}
 	}
-	else if(mapVal["0"]=="ifLE"){
+	else if(operand=="ifLE"){
 		if(op1<=op2){
-			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			tmpJSON = ast["3"];
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				return editorParser(tmpJSON.mapVal);
 			}
 		}
 	}
-	else if(mapVal["0"]=="ifG"){
+	else if(operand=="ifG"){
 		if(op1>op2){
-			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			tmpJSON = ast["3"];
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				return editorParser(tmpJSON.mapVal);
 			}
 		}
 	}
-	else if(mapVal["0"]=="ifGE"){
+	else if(operand=="ifGE"){
 		if(op1>=op2){
-			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			tmpJSON = ast["3"];
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				return editorParser(tmpJSON.mapVal);
 			}
 		}
 	}
 	return false;
+}
+
+void editorEval(std::map<std::string, retJSON> ast){
+	struct retJSON tmpJSON;
+	for(std::map<std::string, retJSON>::iterator it = ast.begin(); it!=ast.end(); it++){
+		tmpJSON=it->second;
+		if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+			editorParser(tmpJSON.mapVal);
+		}
+	}
 }
 
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
@@ -316,7 +356,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		source = "\.\.\\json\\objects";
 		float width=0, height=0, pos_X=0, pos_Y=0,vel_X=0,vel_Y=0,acc_X=0,acc_Y=0;
 		std::string obname = "", defaultAnim="",rigid_value="false";
-		bool rigid=false;
+		bool rigid=false, staticV=false;
 		js = FileManager::Instance()->initializeObjects(source.c_str());
 		for(std::map<int, retJSON>::const_iterator it = js.begin(); it != js.end(); ++it){
 			
@@ -390,6 +430,13 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				rigid_value.assign(tmpJSON.stringVal);
 			if(rigid_value=="true")
 				rigid=true;
+			}
+			staticV=false;
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Static");
+			if(tmpJSON.type == "string"){
+				static_value.assign(tmpJSON.stringVal);
+			if(static_value=="true")
+				staticV=true;
 			}
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
 			if(tmpJSON.type == "string"){

@@ -36,7 +36,7 @@ struct retJSON FileManager::parseJSON(Jzon::Node &node){
 	if (node.IsValue()){
 		switch (node.AsValue().GetValueType()){
 		case Jzon::Value::VT_NULL   : ret.type = "null";return ret;
-		case Jzon::Value::VT_STRING : std::cout<<node.ToString().c_str()<<std::endl;ret.type = "string"; ret.retVal.stringVal=(char*)node.ToString().c_str();return ret;
+		case Jzon::Value::VT_STRING : std::cout<<node.ToString().c_str()<<std::endl;ret.type = "string"; strcpy(ret.retVal.stringVal,(char*)node.ToString().c_str());return ret;
 			case Jzon::Value::VT_NUMBER : std::cout<<node.ToFloat()<<std::endl;
 				if(node.ToFloat() == (float)node.ToInt()){
 					ret.type = "int"; ret.retVal.intVal=node.ToInt();
