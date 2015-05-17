@@ -63,7 +63,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go2->add_state_animation_pair("walk_left","walk_left");
 			go2->add_state_animation_pair("standing","standing");
 			go1=new GameObject("standing",dude,500/6,378/3,600,-30,0,0,0,0,"dude4",true,false);
-			go21=new GameObject("standing",dude,500/6,378/3,200,0,-4,0,0,0,"dude5",true,false);
+			go21=new GameObject("standing",dude,500/6,378/3,200,0,0,0,0,0,"dude5",true,false);
 			go31=new GameObject("standing",dude,500/6,378/3,800,0,0,0,0,0,"dude6",true,false);
 			GameObjectManager::Instance()->addObject(go21);
 			//GameObjectManager::Instance()->addObject(go1);
@@ -122,6 +122,11 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->addAction(new Action("set_velocity_x","dude1",0));
 			e->addAction(new Action("set_state","dude1","standing"));
 			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_RELEASE,SDL_SCANCODE_D);
+			e->addAction(new Action("set_velocity_x","dude1",0));
+			e->addAction(new Action("set_state","dude1","standing"));
+			go->addEvent(e);
 			
 
 
@@ -170,8 +175,9 @@ void Game::update(){
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
 			continue;
-		GameObjectManager::Instance()->getObjectList()[i]->updated=false;
+		GameObjectManager::Instance()->getObjectList()[i]->updatePosition();
 	}
+	
 	collisionResolution();
 	deleteObjects();
 	
@@ -198,24 +204,7 @@ void Game::collisionResolution(){
 			std::cout<<go1->object_id+" checks "+go2->object_id<<"\n";
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
 				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
-				/*if(std::abs(go1->velocity.getX())+std::abs(go2->velocity.getX())>std::abs(go1->velocity.getY())+std::abs(go2->velocity.getY())){
-					go1->translateX(-go1->velocity.getX());
-					go2->translateX(-go2->velocity.getX());
-				}
-				else{
-					go1->translateY(-go1->velocity.getY());
-					go2->translateY(-go2->velocity.getY());
-				}*/
-				/*go1->translateX(-(go1->velocity.getX()+go1->acceleration.getX()));
-				go2->translateX(-(go2->velocity.getX()+go2->acceleration.getX()));
-				if(go1->object_id!="dude3")
-					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()));
-				else
-					go1->translateY(-(go1->velocity.getY()+go1->acceleration.getY()));
-				if(go1->object_id!="dude3")
-					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));
-				else
-					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));*/
+				
 				float x_overlap=std::min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
 				float y_overlap=std::min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
 				if(x_overlap<y_overlap){
@@ -229,13 +218,20 @@ void Game::collisionResolution(){
 						left_go=go2;
 						right_go=go1;
 					}
-					if(go1->is_static==true||go1->getVelocity().getX()==0){
-						go2->translateX(-go2->velocity.getX());
-						go2->setVelocityX(0);
+					if((right_go->is_static==true||right_go->getVelocity().getX()==0)&&left_go->getVelocity().getX()>0){
+						left_go->translateX(-x_overlap);
+						left_go->setVelocityX(0);
 					}
-					else if(go2->is_static==true||go2->getVelocity().getX()==0){
-						go1->translateX(-go1->velocity.getX());
-						go1->setVelocityX(0);
+					else if((right_go->is_static==true||right_go->getVelocity().getX()==0)&&left_go->getVelocity().getX()<0){
+						left_go->translateX(-x_overlap);
+						//left_go->setVelocityX(0);
+					}
+					else if((left_go->is_static==true||left_go->getVelocity().getX()==0)&&right_go->getVelocity().getX()>0){
+						right_go->translateX(y_overlap);
+					}
+					else if((left_go->is_static==true||left_go->getVelocity().getX()==0)&&right_go->getVelocity().getX()<0){
+						right_go->translateX(x_overlap);
+						right_go->setVelocityX(0);
 					}
 					else if(left_go->velocity.getX()>0&&right_go->getVelocity().getX()<0){
 						left_go->translateX(-left_go->getVelocity().getX());
@@ -266,13 +262,19 @@ void Game::collisionResolution(){
 						bot_go=go1;
 						top_go=go2;
 					}
-					if(go1->is_static==true||go1->getVelocity().getY()==0){
-						go2->translateY(-go2->velocity.getY());
-						go2->setVelocityY(0);
+					if((bot_go->is_static==true||bot_go->getVelocity().getY()==0)&&top_go->getVelocity().getY()>0){
+						top_go->translateY(-y_overlap);
+						top_go->setVelocityY(0);
 					}
-					else if(go2->is_static==true||go2->getVelocity().getY()==0){
-						go1->translateY(-go1->velocity.getY());
-						go1->setVelocityY(0);
+					else if((bot_go->is_static==true||bot_go->getVelocity().getY()==0)&&top_go->getVelocity().getY()<0){
+						top_go->translateY(-y_overlap);
+					}
+					else if((top_go->is_static==true||top_go->getVelocity().getY()==0)&&bot_go->getVelocity().getY()>0){
+						bot_go->translateY(y_overlap);
+					}
+					else if((top_go->is_static==true||top_go->getVelocity().getY()==0)&&bot_go->getVelocity().getY()<0){
+						bot_go->translateY(y_overlap);
+						bot_go->setVelocityY(0);
 					}
 					else if(top_go->velocity.getY()>0&&bot_go->getVelocity().getY()<0){
 						top_go->translateY(-top_go->getVelocity().getY());

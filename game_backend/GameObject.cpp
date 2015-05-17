@@ -32,50 +32,6 @@ void GameObject::update(bool coll_cond){
 	for(std::vector<int>::size_type i = 0; i != events.size(); i++) {
 		events[i]->handleEvent(coll_cond);
 	}
-	/*if(width==50){
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
-		setState("walk_right");
-		velocity.setX(1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_A)){
-		setState("walk_left");
-		velocity.setX(-1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
-		setState("walk_right");
-		velocity.setY(-1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
-		setState("walk_left");
-		velocity.setY(1);
-	}
-	if(position.getY()>400){
-		position.setY(400);
-	}
-}
-else{
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_A)){
-		setState("walk_right");
-		velocity.setX(1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_D)){
-		setState("walk_left");
-		velocity.setX(-1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_S)){
-		setState("walk_right");
-		velocity.setY(-1);
-	}
-	if(InputHandler::Instance()->isKeyDown(SDL_SCANCODE_W)){
-		setState("walk_left");
-		velocity.setY(1);
-	}
-	if(position.getY()>400){
-		position.setY(400);
-	}
-}
-*/
-	//acceleration.setY(6);
 	if(coll_cond==false&&is_static==false){
 		
 		//velocity.setY(velocity.getY()+.1);
@@ -89,6 +45,10 @@ else{
 		setAcceleration(acceleration);
 		collision_polygon->updatePosition(position.getX(),position.getY());
 	}
+	
+}
+void GameObject::updatePosition(){
+	
 }
 void GameObject::draw(){
 	SDL_Rect destinationRectangle;

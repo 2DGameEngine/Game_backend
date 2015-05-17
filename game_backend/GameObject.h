@@ -80,6 +80,7 @@ public:
 	std::string getAnimationName(std::string state){
 		return state_animation_map[state];
 	}
+	void GameObject::updatePosition();
 	void add_state_animation_pair(std::string,std::string);
 	void add_variable(std::string,float);
 	void change_variable(std::string,float);
