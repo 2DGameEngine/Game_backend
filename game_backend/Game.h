@@ -8,6 +8,8 @@
 #include <utility>
 #include "GameObjectManager.h"
 #include "GameObject.h"
+#include "TextObjectManager.h"
+#include "TextObject.h"
 #include "Event.h"
 #include "Action.h"
 #include "Sound.h"
@@ -30,6 +32,7 @@ public:
 	}
 	float gravity;
 	void deleteObjects();
+	SDL_Window* getWindow(){ return m_pWindow;}
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 private:
 	Game(){};

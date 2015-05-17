@@ -31,4 +31,5 @@ Camera::Camera(float width,float height,Vector2D position,std::string type,std::
 	Camera::type=type;
 	Camera::linkedObject=linkedObject;
 	Camera::offset=offset;
+	SDL_SetWindowSize(TheGame::Instance()->getWindow(),width,height);
 }

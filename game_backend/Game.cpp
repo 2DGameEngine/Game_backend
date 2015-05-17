@@ -2,19 +2,24 @@
 #include "GameObject.h"
 #include <algorithm>
 #include <cmath>
+#include "SDL_ttf.h"
 #include "Camera.h"
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
 	gravity=.1;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
-	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
+	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)&&(TTF_Init() != -1)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 
-		camera = new Camera(500,500,Vector2D(50,50),"static","dude1",Vector2D(50,50));
+		camera = new Camera(1000,1000,Vector2D(50,50),"dynamic","dude1",Vector2D(50,50));
+
+		TextObject * test = new TextObject(Vector2D(600,200),"test","Feathergun","assets/monofonto.ttf",40);
+		TextObjectManager::Instance()->addObject(test);
+
 		m_bRunning=true;
-		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
+		
 		Model* dude=new Model();
 		dude->load_texture("assets/dude.png");
 		dude->set_width_and_height_frame(500/6,378/3);
@@ -153,6 +158,14 @@ void Game::render(){
 			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->draw();
 	}
+
+	for(std::vector<int>::size_type i = 0; i != TextObjectManager::Instance()->getObjectList().size(); i++) {
+		if(TextObjectManager::Instance()->getObjectList()[i]->visible==false)
+			continue;
+		TextObjectManager::Instance()->getObjectList()[i]->draw();
+	}
+		
+	
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::update(){
