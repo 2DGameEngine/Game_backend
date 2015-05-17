@@ -63,11 +63,11 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go2->add_state_animation_pair("walk_left","walk_left");
 			go2->add_state_animation_pair("standing","standing");
 			go1=new GameObject("standing",dude,500/6,378/3,600,-30,0,0,0,0,"dude4",true,false);
-			go21=new GameObject("standing",dude,500/6,378/3,200,0,0,0,0,0,"dude5",true,false);
+			go21=new GameObject("standing",dude,500/6,378/3,200,0,-4,0,0,0,"dude5",true,false);
 			go31=new GameObject("standing",dude,500/6,378/3,800,0,0,0,0,0,"dude6",true,false);
 			GameObjectManager::Instance()->addObject(go21);
-			GameObjectManager::Instance()->addObject(go1);
-			GameObjectManager::Instance()->addObject(go31);
+			//GameObjectManager::Instance()->addObject(go1);
+			//GameObjectManager::Instance()->addObject(go31);
 			
 			go21->add_state_animation_pair("standing","standing");
 			go31->add_state_animation_pair("standing","standing");
@@ -112,19 +112,28 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
-			e->addAction(new Action("set_velocity_y","dude1",2));
+			e->addAction(new Action("set_position_y","dude1",2));
 			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
 
 			e=new Event();
-			e->setEvent(COLLISION,"dude1");
+			e->setEvent(BUTTON_RELEASE,SDL_SCANCODE_A);
+			e->addAction(new Action("set_velocity_x","dude1",0));
+			e->addAction(new Action("set_state","dude1","standing"));
+			go->addEvent(e);
+			
 
-			e->addAction(new Action("set_state","dude2","walk_left"));
+
+			e=new Event();
+			e->setEvent(COLLISION,"dude5");
+
+			e->addAction(new Action("set_velocity_x","dude1",-4));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			//e->addAction(new Action("play_sound","walking_sound1"));
 
 			//e->addAction(new Action("delete_object",go));
-			go2->addEvent(e);
+			go->addEvent(e);
 		return true;
 	}
 	else{
@@ -153,7 +162,6 @@ void Game::update(){
 			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->update(false);
 	}
-
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		if(GameObjectManager::Instance()->getObjectList()[i]->is_alive==false)
 			continue;

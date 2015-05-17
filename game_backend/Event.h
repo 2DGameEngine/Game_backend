@@ -8,6 +8,7 @@
 class Action;
 enum event_types{
 		BUTTON_CLICK,
+		BUTTON_RELEASE,
 		MOUSE_MOVE,
 		COLLISION,
 		VARIABLE_VALUE_TRIGGER
@@ -28,5 +29,6 @@ private:
 	GameObject* subject;
 	std::string variable_n;
 	float variable_v;
+	bool previous_button_stats;
 };
 #endif

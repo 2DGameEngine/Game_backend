@@ -22,10 +22,10 @@ bool GameObject::isVariableEqual(std::string variable_name, float new_variable_v
 }
 void GameObject::defaultUpdate(){
 	//velocity.setX(0);
-	setVelocityX(0);
+	//setVelocityX(0);
 	//variable_value_map["velocity_y"].first=0;
 	//velocity=getVelocity();
-	setState("standing");
+	//setState("standing");
 	//Mix_HaltChannel(-1);
 }
 void GameObject::update(bool coll_cond){
