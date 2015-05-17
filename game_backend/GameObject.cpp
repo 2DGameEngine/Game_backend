@@ -69,17 +69,13 @@ void GameObject::draw(){
 	int frame_number=int((SDL_GetTicks()/refresh_rate) %(animation->frame_ids.size()));
 	sourceRectangle.x = (animation->frame_ids[frame_number].second-1)*model->width_of_frame;
 	sourceRectangle.y = (animation->frame_ids[frame_number].first-1)*model->height_of_frame;
-	//destinationRectangle.x = position.getX();
-	//destinationRectangle.y = position.getY();
 	destinationRectangle.w = width;
 	destinationRectangle.h = height;
 	sourceRectangle.w=model->width_of_frame;
 	sourceRectangle.h=model->height_of_frame;
-	Vector2D *centerPosition = new Vector2D(position.getX()-width/2,position.getY()-height/2);
-	Vector2D relativePosition = *centerPosition-TheGame::Instance()->camera->getPosition();
-	//std::cout <<TheGame::Instance()->camera->getPosition().getX()+TheGame::Instance()->camera->getPosition().getY();
-	destinationRectangle.x = TheGame::Instance()->camera->width/2+relativePosition.getX();
-	destinationRectangle.y = TheGame::Instance()->camera->height/2+relativePosition.getY();
+	Vector2D relativePosition = position-TheGame::Instance()->camera->getPosition();
+	destinationRectangle.x = TheGame::Instance()->camera->offset.getX()+relativePosition.getX();
+	destinationRectangle.y = TheGame::Instance()->camera->offset.getY()+relativePosition.getY();
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
 GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
