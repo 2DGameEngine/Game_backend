@@ -98,7 +98,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 
 			
 		
-		return true;
+		return true;y
 	}
 	else{
 		std::cout<<"failed\n";
