@@ -2,7 +2,139 @@
 #include "GameObject.h"
 #include <algorithm>
 #include <cmath>
+#include <string.h>
 #include "FileManager.h"
+
+float editorParserRec(std::map<std::string, retJSON> ast){
+	struct retJSON tmpJSON;
+	std::string operand, strFn;
+	float op1, op2;
+	tmpJSON = ast["0"];
+	if(tmpJSON.type == "string"){
+		operand = tmpJSON.retVal.stringVal;
+	}
+	else
+		return 0;
+	tmpJSON = ast["1"];
+	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+		op1 = editorParserRec(tmpJSON.mapVal);
+	}
+	else if(tmpJSON.type == "string"){
+		strFn = tmpJSON.retVal.stringVal;
+		op1 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+	}
+	else if(tmpJSON.type == "int")
+		op1 = tmpJSON.retVal.intVal;
+	else if(tmpJSON.type == "float")
+		op1 = tmpJSON.retVal.floatVal;
+	tmpJSON = ast["2"];
+	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+		op2 = editorParserRec(tmpJSON.mapVal);
+	}
+	else if(tmpJSON.type == "string"){
+		strFn = tmpJSON.retVal.stringVal;
+		op2 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+	}
+	else if(tmpJSON.type == "int")
+		op2 = tmpJSON.retVal.intVal;
+	else if(tmpJSON.type == "float")
+		op2 = tmpJSON.retVal.floatVal;
+	if(operand == "/"){
+		return (op1/op2);
+	}
+	else if(operand == "*"){
+		return (op1*op2);
+	}
+	else if(operand == "+"){
+		return (op1+op2);
+	}
+	else if(operand == "-"){
+		return (op1-op2);
+	}
+	return 0;
+}
+
+bool editorParser(struct retJSON ast){
+	struct retJSON tmpJSON;
+	std::string operand;
+	float op1, op2;
+	tmpJSON = FileManager::Instance()->returnVALUE(ast, "0");
+	if(tmpJSON.type == "string"){
+		operand = tmpJSON.retVal.stringVal;
+	}
+	else
+		return false;
+	tmpJSON = FileManager::Instance()->returnVALUE(ast, "1");
+	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+		op1 = editorParserRec(tmpJSON.mapVal);
+	}
+	else if(tmpJSON.type == "string"){
+		strFn = tmpJSON.retVal.stringVal;
+		op1 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+	}
+	else if(tmpJSON.type == "int")
+		op1 = tmpJSON.retVal.intVal;
+	else if(tmpJSON.type == "float")
+		op1 = tmpJSON.retVal.floatVal;
+	tmpJSON = FileManager::Instance()->returnVALUE(ast, "2");
+	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+		op2 = editorParserRec(tmpJSON.mapVal);
+	}
+	else if(tmpJSON.type == "string"){
+		strFn = tmpJSON.retVal.stringVal;
+		op2 = set_variable(strtok(strFn, "."), strtok(NULL, "."));
+	}
+	else if(tmpJSON.type == "int")
+		op2 = tmpJSON.retVal.intVal;
+	else if(tmpJSON.type == "float")
+		op2 = tmpJSON.retVal.floatVal;
+	if(mapVal["0"]=="Assign"){
+		strFn = tmpJSON.retVal.stringVal;
+		set_variable(strtok(strFn, "."), strtok(NULL, "."), op2);
+		return true;
+	}
+	else if(mapVal["0"]=="if"){
+		if(op1==op2){
+			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				return editorParser(tmpJSON.mapVal);
+			}
+		}
+	}
+	else if(mapVal["0"]=="ifL"){
+		if(op1<op2){
+			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				return editorParser(tmpJSON.mapVal);
+			}
+		}
+	}
+	else if(mapVal["0"]=="ifLE"){
+		if(op1<=op2){
+			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				return editorParser(tmpJSON.mapVal);
+			}
+		}
+	}
+	else if(mapVal["0"]=="ifG"){
+		if(op1>op2){
+			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				return editorParser(tmpJSON.mapVal);
+			}
+		}
+	}
+	else if(mapVal["0"]=="ifGE"){
+		if(op1>=op2){
+			tmpJSON = FileManager::Instance()->returnVALUE(ast, "3");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				return editorParser(tmpJSON.mapVal);
+			}
+		}
+	}
+	return false;
+}
 
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
