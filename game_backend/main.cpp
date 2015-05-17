@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <Windows.h>
 #include "Game.h"
+#include "FileManager.h"
+#include <iostream>
 using namespace std;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-#include "FileManager.h"
-#include <iostream>
 const int FPS=60;
 const int DELAY_TIME=1000.0f/FPS;
 
@@ -16,7 +16,7 @@ int main(int argc,char* argv[]){
 	AllocConsole();
 	freopen("CON","w",stdout);
 	struct retJSON GameJSON, tmpJSON;
-	GameJSON = FileManager::Instance()->readJSON("Game.json");
+	GameJSON = FileManager::Instance()->readJSON("\.\.\\Game.json");
 	int width=0, height=0;
 	std::string gname = ""; 
 	tmpJSON = FileManager::Instance()->returnVALUE(GameJSON, "Width");
@@ -31,6 +31,7 @@ int main(int argc,char* argv[]){
 	if(tmpJSON.type == "string"){
 		gname.assign(tmpJSON.retVal.stringVal);
 	}
+	std::cout<<gname<<"\n";
 	TheGame::Instance()->init(gname.c_str(),100,100,width,height,false);
 	while(TheGame::Instance()->running()){
 		frameStart=SDL_GetTicks();

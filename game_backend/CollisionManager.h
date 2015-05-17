@@ -1,6 +1,7 @@
 #ifndef _COLLISIONMANAGER_
 #define _COLLISIONMANAGER_
 #include "CollisionPolygon.h"
+#include <iostream>
 class CollisionManager{
 public:
 	static CollisionManager* Instance(){
