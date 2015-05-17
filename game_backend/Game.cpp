@@ -19,7 +19,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		TextObjectManager::Instance()->addObject(test);
 
 		m_bRunning=true;
-		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
+		
 		Model* dude=new Model();
 		dude->load_texture("assets/dude.png");
 		dude->set_width_and_height_frame(500/6,378/3);

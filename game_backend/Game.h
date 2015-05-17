@@ -32,6 +32,7 @@ public:
 	}
 	float gravity;
 	void deleteObjects();
+	SDL_Window* getWindow(){ return m_pWindow;}
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 private:
 	Game(){};
