@@ -5,6 +5,7 @@ void Event::addAction(Action* action){
 void Event::setEvent(event_types e,SDL_Scancode scancode){
 	event_type=e;
 	Event::scancode=scancode;
+	previous_button_stats=false;
 }
 void Event::setEvent(event_types e,std::string object_id){
 	event_type=e;
@@ -23,6 +24,17 @@ bool Event::checkEvent(bool coll_cond){
 	
 	if(event_type==BUTTON_CLICK&&coll_cond==false){
 		return InputHandler::Instance()->isKeyDown(scancode);
+	}
+	else if(event_type==BUTTON_RELEASE&&coll_cond==false){
+		if(InputHandler::Instance()->isKeyDown(scancode)){
+			previous_button_stats=true;
+			return false;
+		}
+		else if(!InputHandler::Instance()->isKeyDown(scancode)&&previous_button_stats==true){
+			previous_button_stats=false;
+			return true;
+		}
+		return false;
 	}
 	else if(event_type==COLLISION&&coll_cond==true&&subject->is_alive==true){
 		return CollisionManager::Instance()->isColliding(parent->collision_polygon,subject->collision_polygon);
