@@ -12,7 +12,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 		m_bRunning=true;
-		Model* dude=new Model();
+		/*Model* dude=new Model();
 		dude->load_texture("assets/dude.png");
 		dude->set_width_and_height_frame(500/6,378/3);
 		std::vector<std::pair<int,int>> seq1;
@@ -34,8 +34,239 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		seq3.push_back(std::make_pair(2,6));
 		dude->addAnimation(new Animation("standing",seq1,.1));
 		dude->addAnimation(new Animation("walk_right",seq2,.8));
-		dude->addAnimation(new Animation("walk_left",seq3,.8));
-		
+		dude->addAnimation(new Animation("walk_left",seq3,.8));*/
+
+
+		//Initializing Models from model jsons
+
+		std::map<std::string, Model*> Models;
+		std::map<int, retJSON> js;
+		struct retJSON tmpJSON;
+		float mwidth=0, mheight=0, seq_X=0, seq_Y=0, speed=0;
+		std::string mname = "", sprite="", spriteLoc="", statesName="";
+		std::string source = "\.\.\\json\\models";
+		js = FileManager::Instance()->initializeObjects(source.c_str());
+		for(std::map<int, retJSON>::const_iterator it = js.begin(); it != js.end(); ++it){
+			mname="";
+			sprite="assets\\";
+			mwidth=0;
+			mheight=0;
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
+			if(tmpJSON.type == "string"){
+				mname.assign(tmpJSON.stringVal);
+				std::cout<<"ModelName:"<<mname<<"\n";
+			}
+			Models[mname]=new Model();
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Sprite");
+			if(tmpJSON.type == "string"){
+				sprite+=tmpJSON.stringVal;
+				std::cout<<"Sprite:"<<sprite<<"\n";
+			}
+			Models[mname]->load_texture(sprite);
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Width");
+			if(tmpJSON.type == "int"){
+				mwidth = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				mwidth = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Width:"<<mwidth<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Height");
+			if(tmpJSON.type == "int"){
+				mheight = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				mheight = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Height:"<<mheight<<"\n";
+			Models[mname]->set_width_and_height_frame(mwidth,mheight);
+			std::map<std::string, retJSON> mapVal, seqVal;
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "modelStates");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				mapVal = tmpJSON.mapVal;
+			}
+			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
+				statesName="";
+				speed=0;
+				tmpJSON = FileManager::Instance()->returnVALUE(itt->second, "Name");
+				if(tmpJSON.type == "string"){
+					statesName.assign(tmpJSON.stringVal);
+				}
+				std::cout<<"StateName:"<<statesName<<"\n";
+				tmpJSON = FileManager::Instance()->returnVALUE(itt->second, "Speed");
+				if(tmpJSON.type == "int"){
+					speed = tmpJSON.retVal.intVal;
+				}
+				else if(tmpJSON.type == "float"){
+					speed = tmpJSON.retVal.floatVal;
+				}
+				std::cout<<"Speed:"<<speed<<"\n";
+				tmpJSON = FileManager::Instance()->returnVALUE(itt->second, "Seq");
+				if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+					seqVal = tmpJSON.mapVal;
+				}
+				std::vector<std::pair<int,int>> seq1;
+				for(std::map<std::string, retJSON>::const_iterator iitt = seqVal.begin(); iitt != seqVal.end(); ++iitt){
+					tmpJSON = FileManager::Instance()->returnVALUE(iitt->second, "X");
+					if(tmpJSON.type == "int"){
+						seq_X = tmpJSON.retVal.intVal;
+					}
+					else if(tmpJSON.type == "float"){
+						seq_X = tmpJSON.retVal.floatVal;
+					}
+					std::cout<<"X:"<<seq_X<<"\n";
+					tmpJSON = FileManager::Instance()->returnVALUE(iitt->second, "Y");
+					if(tmpJSON.type == "int"){
+						seq_Y = tmpJSON.retVal.intVal;
+					}
+					else if(tmpJSON.type == "float"){
+						seq_Y = tmpJSON.retVal.floatVal;
+					}
+					std::cout<<"Y:"<<seq_Y<<"\n";
+					seq1.push_back(std::make_pair(seq_X,seq_Y));
+				}
+				Models[mname]->addAnimation(new Animation(statesName,seq1,speed));
+			}
+		}
+
+		//Initializing the objects from object json
+
+		GameObject* go;
+		Event* e;
+		source = "\.\.\\json\\objects";
+		float width=0, height=0, pos_X=0, pos_Y=0,vel_X=0,vel_Y=0,acc_X=0,acc_Y=0;
+		std::string obname = "", defaultAnim="",rigid_value="false";
+		bool rigid=false;
+		js = FileManager::Instance()->initializeObjects(source.c_str());
+		for(std::map<int, retJSON>::const_iterator it = js.begin(); it != js.end(); ++it){
+			
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Width");
+			if(tmpJSON.type == "int"){
+				width = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				width = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Width:"<<width<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Height");
+			if(tmpJSON.type == "int"){
+				height = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				height = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"height:"<<height<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "pos_X");
+			if(tmpJSON.type == "int"){
+				pos_X = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				pos_X = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"X:"<<pos_X<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "pos_Y");
+			if(tmpJSON.type == "int"){
+				pos_Y = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				pos_Y = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Y:"<<pos_Y<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "vel_X");
+			if(tmpJSON.type == "int"){
+				vel_X = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				vel_X = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"X:"<<vel_X<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "vel_Y");
+			if(tmpJSON.type == "int"){
+				vel_Y = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				vel_Y = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Y:"<<vel_Y<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "acc_X");
+			if(tmpJSON.type == "int"){
+				acc_X = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				acc_X = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"X:"<<acc_X<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "acc_Y");
+			if(tmpJSON.type == "int"){
+				acc_Y = tmpJSON.retVal.intVal;
+			}
+			else if(tmpJSON.type == "float"){
+				acc_Y = tmpJSON.retVal.floatVal;
+			}
+			std::cout<<"Y:"<<acc_Y<<"\n";
+			rigid=false;
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Rigid");
+			if(tmpJSON.type == "string"){
+				rigid_value.assign(tmpJSON.stringVal);
+			if(rigid_value=="true")
+				rigid=true;
+			}
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "Name");
+			if(tmpJSON.type == "string"){
+				obname.assign(tmpJSON.stringVal);
+			}
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelName");
+			if(tmpJSON.type == "string"){
+				mname.assign(tmpJSON.stringVal);
+			}
+			std::cout<<"ModelName:"<<mname<<"\n";
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelDefaultAnim");
+			if(tmpJSON.type == "string"){
+				defaultAnim.assign(tmpJSON.stringVal);
+			}
+			std::cout<<"defaultAnim:"<<defaultAnim<<"\n";
+			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid);
+			std::map<std::string, retJSON> mapVal;
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelListAnim");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				mapVal = tmpJSON.mapVal;
+			}
+			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
+				if(itt->second.type == "string"){
+					defaultAnim.assign(itt->second.stringVal);
+				}
+				std::cout<<"AnimState:"<<defaultAnim<<"\n";
+				go->add_state_animation_pair(defaultAnim,defaultAnim);
+			}
+			/*go->add_state_animation_pair("standing","standing");*/
+			go->add_state_animation_pair("walk_right","walk_right");
+			go->add_state_animation_pair("walk_left","walk_left");
+			e= new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
+			e->addAction(new Action("set_velocity",go,Vector2D(1,0)));
+			e->addAction(new Action("set_state",go,"walk_right"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
+			e->addAction(new Action("set_velocity",go,Vector2D(-1,0)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
+			e->addAction(new Action("set_velocity",go,Vector2D(0,-1)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
+			e->addAction(new Action("set_velocity",go,Vector2D(0,2)));
+			e->addAction(new Action("set_state",go,"walk_left"));
+			go->addEvent(e);
+			GameObjectManager::Instance()->addObject(go);
+		}
+
+
+
+
 		GameObject* go;
 		GameObject* go2;
 		Event* e;

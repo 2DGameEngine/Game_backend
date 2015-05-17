@@ -87,12 +87,9 @@
     <ClInclude Include="Action.h" />
     <ClInclude Include="ActionTypes.h" />
     <ClInclude Include="Animation.h" />
-<<<<<<< Updated upstream
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CollisionPolygon.h" />
-=======
     <ClInclude Include="dirent.h" />
->>>>>>> Stashed changes
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventAction.h" />
     <ClInclude Include="FileManager.h" />
