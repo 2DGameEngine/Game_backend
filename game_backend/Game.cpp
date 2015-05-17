@@ -38,6 +38,9 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		GameObject* go;
 		GameObject* go2;
 		GameObject* go3;
+		GameObject* go1;
+		GameObject* go21;
+		GameObject* go31;
 		Event* e;
 
 		
@@ -50,6 +53,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go2->add_state_animation_pair("standing","standing");
 			go3->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
+			go1=new GameObject("standing",dude,500/6,378/3,Vector2D(600,-30),"dude4",true,false);
+			go21=new GameObject("standing",dude,500/6,378/3,Vector2D(200,0),"dude5",true,false);
+			go31=new GameObject("standing",dude,500/6,378/3,Vector2D(800,0),"dude6",true,false);
+			GameObjectManager::Instance()->addObject(go21);
+			GameObjectManager::Instance()->addObject(go1);
+			GameObjectManager::Instance()->addObject(go31);
+			
+			go21->add_state_animation_pair("standing","standing");
+			go31->add_state_animation_pair("standing","standing");
+			go1->add_state_animation_pair("standing","standing");
 
 		Sound* s=new Sound("effect");
 		s->load("assets/footsteps-4.wav");
@@ -182,35 +195,77 @@ void Game::collisionResolution(){
 				float x_overlap=std::min(std::abs(go1->position.getX()+go1->width-go2->position.getX()),std::abs(go2->position.getX()+go2->width-go1->position.getX()));
 				float y_overlap=std::min(std::abs(go1->position.getY()+go1->height-go2->position.getY()),std::abs(go2->position.getY()+go2->height-go1->position.getY()));
 				if(x_overlap<y_overlap){
-					if(go1->is_static==true){
+					GameObject* left_go;
+					GameObject* right_go;
+					if(go1->position.getX()<go2->position.getX()){
+						left_go=go1;
+						right_go=go2;
+					}
+					else{
+						left_go=go2;
+						right_go=go1;
+					}
+					if(go1->is_static==true||go1->velocity.getX()==0){
 						go2->translateX(-go2->velocity.getX());
 						go2->velocity.setX(0);
 					}
-					else if(go2->is_static==true){
-						go1->translateX(-go2->velocity.getX());
-						go1->velocity.setX(0);
-					}
-					else if((go1->velocity.getX()-go2->velocity.getX())*(go1->position.getX()-go2->position.getX())<0){
+					else if(go2->is_static==true||go2->velocity.getX()==0){
 						go1->translateX(-go1->velocity.getX());
-						go2->translateX(-go2->velocity.getX());
 						go1->velocity.setX(0);
-						go2->velocity.setX(0);
+					}
+					else if(left_go->velocity.getX()>0&&right_go->velocity.getX()<0){
+						left_go->translateX(-left_go->velocity.getX());
+						right_go->translateX(-right_go->velocity.getX());
+						left_go->velocity.setX(0);
+						right_go->velocity.setX(0);
+					}
+					else if(left_go->velocity.getX()<0&&right_go->velocity.getX()>0){
+						
+					}
+					else if(left_go->velocity.getX()>0&&right_go->velocity.getX()>0){
+						left_go->translateX(-x_overlap);
+						left_go->velocity.setX(0);
+					}
+					else if(left_go->velocity.getX()<0&&right_go->velocity.getX()<0){
+						right_go->translateX(x_overlap);
+						right_go->velocity.setX(0);
 					}
 				}
 				else{
-					if(go1->is_static==true){
+					GameObject* top_go;
+					GameObject* bot_go;
+					if(go1->position.getY()<go2->position.getY()){
+						top_go=go1;
+						bot_go=go2;
+					}
+					else{
+						bot_go=go1;
+						top_go=go2;
+					}
+					if(go1->is_static==true||go1->velocity.getY()==0){
 						go2->translateY(-go2->velocity.getY());
 						go2->velocity.setY(0);
 					}
-					else if(go2->is_static==true){
-						go1->translateX(-go2->velocity.getY());
-						go1->velocity.setY(0);
-					}
-					else if((go1->velocity.getY()-go2->velocity.getY())*(go1->position.getY()-go2->position.getY())<0){
+					else if(go2->is_static==true||go2->velocity.getY()==0){
 						go1->translateY(-go1->velocity.getY());
-						go2->translateY(-go2->velocity.getY());
 						go1->velocity.setY(0);
-						go2->velocity.setY(0);
+					}
+					else if(top_go->velocity.getY()>0&&bot_go->velocity.getY()<0){
+						top_go->translateY(-top_go->velocity.getY());
+						bot_go->translateY(-bot_go->velocity.getY());
+						top_go->velocity.setY(0);
+						bot_go->velocity.setY(0);
+					}
+					else if(top_go->velocity.getY()<0&&bot_go->velocity.getY()>0){
+						
+					}
+					else if(top_go->velocity.getY()>0&&bot_go->velocity.getY()>0){
+						top_go->translateY(-y_overlap);
+						top_go->velocity.setY(0);
+					}
+					else if(top_go->velocity.getY()<0&&bot_go->velocity.getY()<0){
+						bot_go->translateY(y_overlap);
+						bot_go->velocity.setY(0);
 					}
 				}
 				/*float go1_x_adj;
