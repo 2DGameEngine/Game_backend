@@ -39,8 +39,8 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		Event* e;
 
 		
-			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true);
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true);
+			go=new GameObject("standing",dude,500/6,378/3,20,20,0,0,0,0,"dude1",true);
+			go2=new GameObject("standing",dude,500/6,378/3,200,200,0,0,0,0,"dude2",true);
 			
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
@@ -95,7 +95,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->setEvent(COLLISION,"dude1");
 			e->addAction(new Action("set_state",go2,"walk_left"));
 			//e->addAction(new Action("play_sound","walking_sound1"));
-			e->addAction(new Action("delete_object",go));
+			//e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
 			
 		

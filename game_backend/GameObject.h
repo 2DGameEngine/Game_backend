@@ -14,8 +14,8 @@ class Model;
 class Event;
 class GameObject{
 public:
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,bool);
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string,bool);
+	GameObject(std::string state_id,Model*,float width,float height,float positionX,float positionY,float velocityX,float velocityY,float accelerationX,float accelerationY,bool);
+	GameObject(std::string state_id,Model*,float width,float height,float positionX,float positionY,float velocityX,float velocityY,float accelerationX,float accelerationY,std::string,bool);
 	void update(bool);
 	void defaultUpdate();
 	void draw();
@@ -23,30 +23,54 @@ public:
 	void setState(std::string state){
 		GameObject::state=state;
 	}
+	Vector2D getPosition(){
+		return Vector2D(variable_value_map["position_x"].first,variable_value_map["position_y"].first);
+	}
+	Vector2D getVelocity(){
+		return Vector2D(variable_value_map["velocity_x"].first,variable_value_map["velocity_y"].first);
+	}
+	Vector2D getAcceleration(){
+		return Vector2D(variable_value_map["acceleration_x"].first,variable_value_map["acceleration_y"].first);
+	}
+	void setPosition(Vector2D position){
+		variable_value_map["position_x"].first=position.getX();
+		variable_value_map["position_y"].first=position.getY();
+	}
+	void setVelocity(Vector2D velocity){
+		variable_value_map["velocity_x"].first=velocity.getX();
+		variable_value_map["velocity_y"].first=velocity.getY();
+	}
+	void setAcceleration(Vector2D acceleration){
+		variable_value_map["acceleration_x"].first=acceleration.getX();
+		variable_value_map["acceleration_y"].first=acceleration.getY();
+	}
+	/*
 	void setVelocity(Vector2D velocity){
 		GameObject::velocity=velocity;
-	}
+	}*/
 	void setVelocityX(float x){
-		GameObject::velocity.setX(x);
+		variable_value_map["velocity_x"].first=x;
 	}
 	void setVelocityY(float y){
-		GameObject::velocity.setY(y);
+		variable_value_map["velocity_y"].first=y;
 	}
+	/*
 	void setPosition(Vector2D position){
 		GameObject::position=position;
 		collision_polygon->updatePosition(position.getX(),position.getY());
-	}
+	}*/
 	void setPositionX(float new_x){
-		setPosition(Vector2D(new_x,position.getY()));
+		variable_value_map["position_x"].first=new_x;
 	}
 	void setPositionY(float new_y){
-		setPosition(Vector2D(position.getX(),new_y));
+		variable_value_map["position_y"].first=new_y;
 	}
+
 	void translateX(float x){
-		setPosition(Vector2D(position.getX()+x,position.getY()));
+		variable_value_map["position_x"].first+=x;
 	}
 	void translateY(float y){
-		setPosition(Vector2D(position.getX(),position.getY()+y));
+		variable_value_map["position_y"].first+=y;
 	}
 	std::string getAnimationName(std::string state){
 		return state_animation_map[state];
@@ -68,6 +92,7 @@ public:
 	float height;
 	bool rigid;
 	bool is_alive;
+	
 	std::map <std::string,std::pair <float,float>> variable_value_map;
 private:
 	Model* model;

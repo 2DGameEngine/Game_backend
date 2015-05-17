@@ -21,7 +21,9 @@ bool GameObject::isVariableEqual(std::string variable_name, float new_variable_v
 		return false;
 }
 void GameObject::defaultUpdate(){
-	velocity=Vector2D(0,0);
+	variable_value_map["velocity_x"].first=0;
+	variable_value_map["velocity_y"].first=0;
+	velocity=getVelocity();
 	setState("standing");
 	//Mix_HaltChannel(-1);
 }
@@ -74,8 +76,14 @@ else{
 */
 	//acceleration.setY(6);
 	if(coll_cond==false){
+	position=getPosition();
+	velocity=getVelocity();
+	acceleration=getAcceleration();
 	velocity+=acceleration;
 	position+=velocity;
+	setPosition(position);
+	setVelocity(velocity);
+	setAcceleration(acceleration);
 	collision_polygon->updatePosition(position.getX(),position.getY());
 	}
 }
@@ -87,21 +95,27 @@ void GameObject::draw(){
 	int frame_number=int((SDL_GetTicks()/refresh_rate) %(animation->frame_ids.size()));
 	sourceRectangle.x = (animation->frame_ids[frame_number].second-1)*model->width_of_frame;
 	sourceRectangle.y = (animation->frame_ids[frame_number].first-1)*model->height_of_frame;
-	destinationRectangle.x = position.getX();
-	destinationRectangle.y = position.getY();
+	destinationRectangle.x = variable_value_map["position_x"].first;
+	destinationRectangle.y = variable_value_map["position_y"].first;
 	destinationRectangle.w =width;
 	destinationRectangle.h =height;
 	sourceRectangle.w=model->width_of_frame;
 	sourceRectangle.h=model->height_of_frame;
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,float positionX,float positionY,float velocityX,float velocityY,float accelerationX,float accelerationY,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 		static int object_num=0;
 		GameObject::state=state;
-		GameObject::position = position;
+		add_variable("position_x",positionX);
+		add_variable("position_y",positionY);
+		add_variable("velocity_x",velocityX);
+		add_variable("velocity_y",velocityY);
+		add_variable("acceleration_x",accelerationX);
+		add_variable("acceleration_y",accelerationY);
+		//GameObject::position = position;
 		GameObject::model=model;
-		GameObject::velocity = Vector2D(0,0);
-		GameObject::acceleration = Vector2D(0,0);
+		//GameObject::velocity = Vector2D(0,0);
+		//GameObject::acceleration = Vector2D(0,0);
 		GameObject::width=width;
 		GameObject::height=height;
 		GameObject::rigid=rigid;
@@ -110,13 +124,19 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		updated=false;
 		is_alive=true;
 	}
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,float positionX,float positionY,float velocityX,float velocityY,float accelerationX,float accelerationY,std::string object_id,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 	static int object_num=0;
 		GameObject::state=state;
-		GameObject::position = position;
+		add_variable("position_x",positionX);
+		add_variable("position_y",positionY);
+		add_variable("velocity_x",velocityX);
+		add_variable("velocity_y",velocityY);
+		add_variable("acceleration_x",accelerationX);
+		add_variable("acceleration_y",accelerationY);
+		//GameObject::position = position;
 		GameObject::model=model;
-		GameObject::velocity = Vector2D(0,0);
-		GameObject::acceleration = Vector2D(0,0);
+		//GameObject::velocity = Vector2D(0,0);
+		//GameObject::acceleration = Vector2D(0,0);
 		GameObject::width=width;
 		GameObject::height=height;
 		GameObject::rigid=rigid;
