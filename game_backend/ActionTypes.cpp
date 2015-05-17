@@ -17,4 +17,7 @@ void ActionTypes::setState(GameObject* game_object,std::string state){
 void ActionTypes::playSound(std::string sound_id){
 	SoundManager::Instance()->getSound(sound_id)->play();
 }
+void ActionTypes::deleteObject(GameObject* game_object){
+	game_object->deleteOb();
+}
 ActionTypes* ActionTypes::s_pInstance=0;

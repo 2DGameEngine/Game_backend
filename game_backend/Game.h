@@ -28,6 +28,7 @@ public:
 		}
 		return s_pInstance;
 	}
+	void deleteObjects();
 	SDL_Renderer* getRenderer() const { return m_pRenderer; }
 private:
 	Game(){};

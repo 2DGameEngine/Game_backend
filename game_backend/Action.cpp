@@ -20,4 +20,7 @@ void Action::runAction(){
 	else if(action_type=="play_sound"){
 		ActionTypes::Instance()->playSound(string);
 	}
+	else if(action_type=="delete_object"){
+		ActionTypes::Instance()->deleteObject(game_object);
+	}
 }

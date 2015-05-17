@@ -63,6 +63,7 @@ public:
 	float width;
 	float height;
 	bool rigid;
+	bool is_alive;
 private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;
