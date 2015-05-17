@@ -16,6 +16,7 @@
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="TextObject.cpp" />
+    <ClCompile Include="TextObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.h" />
@@ -35,5 +36,6 @@
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="TextObject.h" />
     <ClInclude Include="Vector2D.h" />
+    <ClInclude Include="TextObjectManager.h" />
   </ItemGroup>
 </Project>

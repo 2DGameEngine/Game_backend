@@ -8,6 +8,8 @@
 #include <utility>
 #include "GameObjectManager.h"
 #include "GameObject.h"
+#include "TextObjectManager.h"
+#include "TextObject.h"
 #include "Event.h"
 #include "Action.h"
 #include "Sound.h"

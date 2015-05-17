@@ -14,6 +14,10 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 
 		camera = new Camera(1000,1000,Vector2D(50,50),"dynamic","dude1",Vector2D(50,50));
+
+		TextObject * test = new TextObject(Vector2D(600,200),"test","Feathergun","assets/monofonto.ttf",40);
+		TextObjectManager::Instance()->addObject(test);
+
 		m_bRunning=true;
 		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
 		Model* dude=new Model();
@@ -141,29 +145,11 @@ void Game::render(){
 		GameObjectManager::Instance()->getObjectList()[i]->draw();
 	}
 
-
-	/*
-	TTF_Font* gFont = TTF_OpenFont("assets/monofonto.ttf",28);
-	 if( gFont == NULL )
-    {
-        std::cout<<TTF_GetError();
-    }
-	SDL_Color textColor = {0, 0, 0};
-	//std::string text="Bleah Bleah";
-	SDL_Surface* textSurface = TTF_RenderText_Solid(gFont, "sadasd", textColor); //Creating surface from font
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_pRenderer, textSurface); //Creating texture from surface pixels
-	SDL_Rect sourceRectangle;
-	SDL_Rect destinationRectangle;
-	sourceRectangle.x=0;
-	sourceRectangle.y=0;
-	sourceRectangle.w=textSurface->w;
-	sourceRectangle.h=textSurface->h;
-	destinationRectangle.x=600;
-	destinationRectangle.y=200;
-	destinationRectangle.w=textSurface->w;
-	destinationRectangle.h=textSurface->h;
-	SDL_RenderCopyEx(m_pRenderer,textTexture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
-	*/
+	for(std::vector<int>::size_type i = 0; i != TextObjectManager::Instance()->getObjectList().size(); i++) {
+		if(TextObjectManager::Instance()->getObjectList()[i]->visible==false)
+			continue;
+		TextObjectManager::Instance()->getObjectList()[i]->draw();
+	}
 		
 	
 	SDL_RenderPresent(m_pRenderer);
