@@ -6,39 +6,42 @@ class Action{
 public:
 	void runAction();
 	
-	Action(std::string action_type,GameObject* game_object,Vector2D vector){
+	Action(std::string action_type,std::string game_object_id,Vector2D vector){
 		Action::action_type=action_type;
 		Action::vector=vector;
-		Action::game_object=game_object;
+		Action::game_object_id= game_object_id;
 	}
-	Action(std::string action_type,GameObject* game_object,float x){
+	Action(std::string action_type,std::string game_object_id,float x){
 		Action::action_type=action_type;
 		value=x;
-		Action::game_object=game_object;
+		Action::game_object_id=game_object_id;
 	}
-	Action(std::string action_type,GameObject* game_object){
-		Action::action_type=action_type;
-		Action::game_object=game_object;
-	}
-	Action(std::string action_type,GameObject* game_object,std::string string){
+	Action(std::string action_type,std::string game_object_id,std::string string){
 		Action::action_type=action_type;
 		Action::string=string;
-		Action::game_object=game_object;
+		Action::game_object_id=game_object_id;
 	}
 	Action(std::string action_type,std::string string){
 		Action::action_type=action_type;
-		Action::string=string;
-		Action::game_object=NULL;
+		
+		if(action_type=="play_sound"){
+			Action::string=string;
+			Action::game_object_id="";
+		}
+		else {
+			Action::game_object_id=game_object_id;
+			Action::string="";
+		}	
 	}
-	Action(std::string action_type,GameObject* game_object,std::string string,float x){
+	Action(std::string action_type,std::string game_object_id,std::string string,float x){
 		Action::action_type=action_type;
 		Action::string=string;
-		Action::game_object=game_object;
+		Action::game_object_id=game_object_id;
 		value=x;
 	}
 private:
 	std::string action_type;
-	GameObject* game_object;
+	std::string game_object_id;
 	Vector2D vector;
 	std::string string;
 	float value;
