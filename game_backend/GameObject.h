@@ -14,8 +14,8 @@ class Model;
 class Event;
 class GameObject{
 public:
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,bool);
-	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string,bool);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,bool,bool);
+	GameObject(std::string state_id,Model*,float width,float height,Vector2D position,std::string,bool,bool);
 	void update(bool);
 	void defaultUpdate();
 	void draw();
@@ -64,6 +64,7 @@ public:
 	float height;
 	bool rigid;
 	bool is_alive;
+	bool is_static;
 private:
 	Model* model;
 	std::map <std::string,std::string> state_animation_map;

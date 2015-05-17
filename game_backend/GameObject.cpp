@@ -55,9 +55,9 @@ else{
 }
 */
 	//acceleration.setY(6);
-	if(coll_cond==false&&object_id!="dude3"){
+	if(coll_cond==false&&is_static==false){
 		velocity+=acceleration;
-		velocity+=(Vector2D(0,TheGame::Instance()->gravity));
+		velocity.setY(velocity.getY()+.1);
 	position+=velocity;
 	collision_polygon->updatePosition(position.getX(),position.getY());
 	}
@@ -78,7 +78,7 @@ void GameObject::draw(){
 	sourceRectangle.h=model->height_of_frame;
 	SDL_RenderCopyEx(TheGame::Instance()->getRenderer(),model->texture,&sourceRectangle,&destinationRectangle,0,0,SDL_FLIP_NONE);
 }
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,bool rigid,bool is_static):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 		static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = position;
@@ -88,12 +88,13 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::width=width;
 		GameObject::height=height;
 		GameObject::rigid=rigid;
+		GameObject::is_static=is_static;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
 		is_alive=true;
 	}
-GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id,bool rigid):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
+GameObject::GameObject(std::string state,Model* model,float width,float height,Vector2D position,std::string object_id,bool rigid,bool is_static):collision_polygon(new CollisionPolygon(position.getX(),position.getY(),width,height)){
 	static int object_num=0;
 		GameObject::state=state;
 		GameObject::position = position;
@@ -103,6 +104,7 @@ GameObject::GameObject(std::string state,Model* model,float width,float height,V
 		GameObject::width=width;
 		GameObject::height=height;
 		GameObject::rigid=rigid;
+		GameObject::is_static=is_static;
 		GameObject::object_id="object"+std::to_string(static_cast<long long>(object_num));
 		object_num++;
 		updated=false;
