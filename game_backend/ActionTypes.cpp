@@ -20,4 +20,7 @@ void ActionTypes::playSound(std::string sound_id){
 void ActionTypes::deleteObject(GameObject* game_object){
 	game_object->deleteOb();
 }
+void ActionTypes::changevariable(GameObject* game_object,std::string variable_name,float variable_value){
+	game_object->change_variable(variable_name,variable_value);
+}
 ActionTypes* ActionTypes::s_pInstance=0;

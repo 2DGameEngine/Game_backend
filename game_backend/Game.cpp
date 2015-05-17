@@ -44,18 +44,21 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		Event* e;
 
 		
-			go=new GameObject("standing",dude,500/6,378/3,Vector2D(20,20),"dude1",true,false);
-			go2=new GameObject("standing",dude,500/6,378/3,Vector2D(400,0),"dude2",true,false);
-			go3=new GameObject("standing",dude,5000/6,3780/3,Vector2D(0,200),"dude3",true,true);
+
+			go=new GameObject("standing",dude,500/6,378/3,20,20,0,0,0,0,"dude1",true,false);
+			go2=new GameObject("standing",dude,500/6,378/3,200,200,0,0,0,0,"dude2",true,false);
+			go3=new GameObject("standing",dude,5000/6,3780/3,0,200,0,0,0,0,"dude3",true,true);
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
 			GameObjectManager::Instance()->addObject(go3);
-			go2->add_state_animation_pair("standing","standing");
+			go->add_state_animation_pair("standing","standing");
+			go->add_state_animation_pair("walk_left","walk_left");
 			go3->add_state_animation_pair("standing","standing");
 			go2->add_state_animation_pair("walk_left","walk_left");
-			go1=new GameObject("standing",dude,500/6,378/3,Vector2D(600,-30),"dude4",true,false);
-			go21=new GameObject("standing",dude,500/6,378/3,Vector2D(200,0),"dude5",true,false);
-			go31=new GameObject("standing",dude,500/6,378/3,Vector2D(800,0),"dude6",true,false);
+			go2->add_state_animation_pair("standing","standing");
+			go1=new GameObject("standing",dude,500/6,378/3,600,-30,0,0,0,0,"dude4",true,false);
+			go21=new GameObject("standing",dude,500/6,378/3,200,0,0,0,0,0,"dude5",true,false);
+			go31=new GameObject("standing",dude,500/6,378/3,800,0,0,0,0,0,"dude6",true,false);
 			GameObjectManager::Instance()->addObject(go21);
 			GameObjectManager::Instance()->addObject(go1);
 			GameObjectManager::Instance()->addObject(go31);
@@ -70,43 +73,50 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		s2->load("assets/a.wav");
 		SoundManager::Instance()->addSound(s,"walking_sound");
 		SoundManager::Instance()->addSound(s2,"walking_sound1");
-		
-
+		go->add_variable("health",100);
+			e= new Event();
+			e->setEvent(VARIABLE_VALUE_TRIGGER,"dude1","health",80);
+			e->addAction(new Action("play_sound","walking_sound1"));
+			go->addEvent(e);
+			
 			go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
 			e= new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-			e->addAction(new Action("set_velocity_x",go,4));
-			e->addAction(new Action("set_state",go,"walk_right"));
+			e->addAction(new Action("set_velocity_x","dude1",4));
+			e->addAction(new Action("set_state","dude1","walk_right"));
+			e->addAction(new Action("change_variable","dude1","health",80));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_A);
-			e->addAction(new Action("set_velocity_x",go,-4));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_x","dude1",-4));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
-			e->addAction(new Action("set_velocity_x",go2,-4));
-			e->addAction(new Action("set_state",go2,"walk_left"));
+			e->addAction(new Action("set_velocity_x","dude2",-4));
+			e->addAction(new Action("set_state","dude2","walk_left"));
 			go2->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_W);
-			e->addAction(new Action("set_velocity_y",go,-4));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_y","dude1",-4));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound1"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_S);
-			e->addAction(new Action("set_velocity_y",go,2));
-			e->addAction(new Action("set_state",go,"walk_left"));
+			e->addAction(new Action("set_velocity_y","dude1",2));
+			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
 
 			e=new Event();
 			e->setEvent(COLLISION,"dude1");
-			e->addAction(new Action("set_state",go2,"walk_left"));
-			e->addAction(new Action("play_sound","walking_sound"));
+
+			e->addAction(new Action("set_state","dude2","walk_left"));
+			//e->addAction(new Action("play_sound","walking_sound1"));
+
 			//e->addAction(new Action("delete_object",go));
 			go2->addEvent(e);
 		return true;
@@ -192,12 +202,12 @@ void Game::collisionResolution(){
 					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));
 				else
 					go2->translateY(-(go2->velocity.getY()+go2->acceleration.getY()));*/
-				float x_overlap=std::min(std::abs(go1->position.getX()+go1->width-go2->position.getX()),std::abs(go2->position.getX()+go2->width-go1->position.getX()));
-				float y_overlap=std::min(std::abs(go1->position.getY()+go1->height-go2->position.getY()),std::abs(go2->position.getY()+go2->height-go1->position.getY()));
+				float x_overlap=std::min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
+				float y_overlap=std::min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
 				if(x_overlap<y_overlap){
 					GameObject* left_go;
 					GameObject* right_go;
-					if(go1->position.getX()<go2->position.getX()){
+					if(go1->getPosition().getX()<go2->getPosition().getX()){
 						left_go=go1;
 						right_go=go2;
 					}
@@ -205,36 +215,36 @@ void Game::collisionResolution(){
 						left_go=go2;
 						right_go=go1;
 					}
-					if(go1->is_static==true||go1->velocity.getX()==0){
+					if(go1->is_static==true||go1->getVelocity().getX()==0){
 						go2->translateX(-go2->velocity.getX());
-						go2->velocity.setX(0);
+						go2->setVelocityX(0);
 					}
-					else if(go2->is_static==true||go2->velocity.getX()==0){
+					else if(go2->is_static==true||go2->getVelocity().getX()==0){
 						go1->translateX(-go1->velocity.getX());
-						go1->velocity.setX(0);
+						go1->setVelocityX(0);
 					}
-					else if(left_go->velocity.getX()>0&&right_go->velocity.getX()<0){
-						left_go->translateX(-left_go->velocity.getX());
-						right_go->translateX(-right_go->velocity.getX());
-						left_go->velocity.setX(0);
-						right_go->velocity.setX(0);
+					else if(left_go->velocity.getX()>0&&right_go->getVelocity().getX()<0){
+						left_go->translateX(-left_go->getVelocity().getX());
+						right_go->translateX(-right_go->getVelocity().getX());
+						left_go->setVelocityX(0);
+						right_go->setVelocityX(0);
 					}
-					else if(left_go->velocity.getX()<0&&right_go->velocity.getX()>0){
+					else if(left_go->velocity.getX()<0&&right_go->getVelocity().getX()>0){
 						
 					}
-					else if(left_go->velocity.getX()>0&&right_go->velocity.getX()>0){
+					else if(left_go->velocity.getX()>0&&right_go->getVelocity().getX()>0){
 						left_go->translateX(-x_overlap);
-						left_go->velocity.setX(0);
+						left_go->setVelocityX(0);
 					}
-					else if(left_go->velocity.getX()<0&&right_go->velocity.getX()<0){
+					else if(left_go->velocity.getX()<0&&right_go->getVelocity().getX()<0){
 						right_go->translateX(x_overlap);
-						right_go->velocity.setX(0);
+						right_go->setVelocityX(0);
 					}
 				}
 				else{
 					GameObject* top_go;
 					GameObject* bot_go;
-					if(go1->position.getY()<go2->position.getY()){
+					if(go1->getPosition().getY()<go2->getPosition().getY()){
 						top_go=go1;
 						bot_go=go2;
 					}
@@ -242,30 +252,30 @@ void Game::collisionResolution(){
 						bot_go=go1;
 						top_go=go2;
 					}
-					if(go1->is_static==true||go1->velocity.getY()==0){
+					if(go1->is_static==true||go1->getVelocity().getY()==0){
 						go2->translateY(-go2->velocity.getY());
-						go2->velocity.setY(0);
+						go2->setVelocityY(0);
 					}
-					else if(go2->is_static==true||go2->velocity.getY()==0){
+					else if(go2->is_static==true||go2->getVelocity().getY()==0){
 						go1->translateY(-go1->velocity.getY());
-						go1->velocity.setY(0);
+						go1->setVelocityY(0);
 					}
-					else if(top_go->velocity.getY()>0&&bot_go->velocity.getY()<0){
-						top_go->translateY(-top_go->velocity.getY());
-						bot_go->translateY(-bot_go->velocity.getY());
-						top_go->velocity.setY(0);
-						bot_go->velocity.setY(0);
+					else if(top_go->velocity.getY()>0&&bot_go->getVelocity().getY()<0){
+						top_go->translateY(-top_go->getVelocity().getY());
+						bot_go->translateY(-bot_go->getVelocity().getY());
+						top_go->setVelocityY(0);
+						bot_go->setVelocityY(0);
 					}
-					else if(top_go->velocity.getY()<0&&bot_go->velocity.getY()>0){
+					else if(top_go->velocity.getY()<0&&bot_go->getVelocity().getY()>0){
 						
 					}
-					else if(top_go->velocity.getY()>0&&bot_go->velocity.getY()>0){
+					else if(top_go->velocity.getY()>0&&bot_go->getVelocity().getY()>0){
 						top_go->translateY(-y_overlap);
-						top_go->velocity.setY(0);
+						top_go->setVelocityY(0);
 					}
-					else if(top_go->velocity.getY()<0&&bot_go->velocity.getY()<0){
+					else if(top_go->velocity.getY()<0&&bot_go->getVelocity().getY()<0){
 						bot_go->translateY(y_overlap);
-						bot_go->velocity.setY(0);
+						bot_go->setVelocityY(0);
 					}
 				}
 				/*float go1_x_adj;
