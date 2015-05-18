@@ -452,19 +452,20 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				defaultAnim.assign(tmpJSON.retVal.stringVal);
 			}
 			std::cout<<"defaultAnim:"<<defaultAnim<<"\n";
-			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid);
+			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid, staticV);
 			std::map<std::string, retJSON> mapVal;
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelListAnim");
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				mapVal = tmpJSON.mapVal;
-			}
-			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
-				if(itt->second.type == "string"){
-					defaultAnim.assign(itt->second.retVal.stringVal);
+				for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
+					if(itt->second.type == "string"){
+						defaultAnim.assign(itt->second.retVal.stringVal);
+					}
+					std::cout<<"AnimState:"<<defaultAnim<<"\n";
+					go->add_state_animation_pair(defaultAnim,defaultAnim);
 				}
-				std::cout<<"AnimState:"<<defaultAnim<<"\n";
-				go->add_state_animation_pair(defaultAnim,defaultAnim);
 			}
+
 			/*go->add_state_animation_pair("standing","standing");*/
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");
