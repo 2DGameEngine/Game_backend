@@ -58,7 +58,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 
 			go=new GameObject("standing",dude,500/6,378/3,20,20,0,0,0,0,"dude1",true,false);
 			go2=new GameObject("standing",dude,500/6,378/3,200,200,0,0,0,0,"dude2",true,false);
-			go3=new GameObject("standing",dude,5000/6,3780/3,0,200,0,0,0,0,"dude3",true,true);
+			go3=new GameObject("standing",dude,500/6,378/3,0,200,0,0,0,0,"dude3",true,true);
 
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
@@ -125,11 +125,11 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_P);
-			e->addAction(new Action("change_text_visibility","test",true));
+			e->addAction(new Action("change_text_string","test","aaaaaaaaaaaaaaa"));
 			go->addEvent(e);
 			e=new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_O);
-			e->addAction(new Action("change_text_visibility","test",false));
+			e->addAction(new Action("change_text_string","test","bbbbbbbbbbbbbbb"));
 			go->addEvent(e);
 
 			e=new Event();

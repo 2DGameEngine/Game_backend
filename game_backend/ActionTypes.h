@@ -16,6 +16,7 @@ public:
 	void deleteObject(GameObject* game_object);
 	void changevariable(GameObject*,std::string,float);
 	void changeTextVisibility(std::string,bool);
+	void changeTextString(std::string,std::string);
 	static ActionTypes* Instance(){
 		if(s_pInstance==0){
 			s_pInstance=new ActionTypes();

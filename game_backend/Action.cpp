@@ -32,4 +32,7 @@ void Action::runAction(){
 	else if(action_type=="change_text_visibility"){
 		ActionTypes::Instance()->changeTextVisibility(text_object_id,visible);
 	}
+	else if(action_type=="change_text_string"){
+		ActionTypes::Instance()->changeTextString(text_object_id,string);
+	}
 }

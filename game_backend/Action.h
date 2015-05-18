@@ -27,6 +27,11 @@ public:
 		Action::game_object_id=game_object_id;
 	}
 	Action(std::string action_type,std::string game_object_id,std::string string){
+		if(action_type=="change_text_string"){
+			Action::action_type=action_type;
+			Action::text_object_id=game_object_id;
+			Action::string=string;
+		}
 		Action::action_type=action_type;
 		Action::string=string;
 		Action::game_object_id=game_object_id;

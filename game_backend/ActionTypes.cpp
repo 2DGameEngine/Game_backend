@@ -27,4 +27,7 @@ void ActionTypes::changevariable(GameObject* game_object,std::string variable_na
 void ActionTypes::changeTextVisibility(std::string text_object_id,bool visible){
 	TextObjectManager::Instance()->getObject(text_object_id)->setVisible(visible);
 }
+void ActionTypes::changeTextString(std::string text_object_id,std::string string){
+	TextObjectManager::Instance()->getObject(text_object_id)->setText(string);
+}
 ActionTypes* ActionTypes::s_pInstance=0;
