@@ -21,161 +21,8 @@ std::vector<std::string> split(std::string str, char delimiter) {
   return internalL;
 }
 
-float get_variable(std::string object_id,std::string variable_name){
-	return GameObjectManager::Instance()->getObject(object_id)->return_variable_value(variable_name);
-}
 
-void set_variable(std::string object_id,std::string variable_name, float op2){
-	GameObjectManager::Instance()->getObject(object_id)->change_variable(variable_name, op2);
-}
 
-float editorParserRec(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	std::string operand;
-	char *strFn;
-	float op1, op2;
-	tmpJSON = ast["0"];
-	if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		operand = tmpJSON.retVal.stringVal;
-	}
-	else
-		return 0;
-	tmpJSON = ast["1"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op1 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op1 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op1 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op1 = tmpJSON.retVal.floatVal;
-	tmpJSON = ast["2"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op2 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op2 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op2 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op2 = tmpJSON.retVal.floatVal;
-	if(operand == "/"){
-		return (op1/op2);
-	}
-	else if(operand == "*"){
-		return (op1*op2);
-	}
-	else if(operand == "+"){
-		return (op1+op2);
-	}
-	else if(operand == "-"){
-		return (op1-op2);
-	}
-	return 0;
-}
-
-bool editorParser(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	std::string operand;
-	char* strFn;
-	float op1, op2;
-	tmpJSON = ast["0"];
-	if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		operand = tmpJSON.retVal.stringVal;
-	}
-	else
-		return false;
-	tmpJSON = ast["1"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op1 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op1 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op1 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op1 = tmpJSON.retVal.floatVal;
-	tmpJSON = ast["2"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op2 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op2 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op2 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op2 = tmpJSON.retVal.floatVal;
-	if(operand=="Assign"){
-		std::vector<std::string> splitS = split(ast["1"].retVal.stringVal, '.');
-		set_variable(splitS[0], splitS[1], op2);
-		return true;
-	}
-	else if(operand=="if"){
-		if(op1==op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifL"){
-		if(op1<op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifLE"){
-		if(op1<=op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifG"){
-		if(op1>op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifGE"){
-		if(op1>=op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	return false;
-}
-
-void editorEval(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	for(std::map<std::string, retJSON>::iterator it = ast.begin(); it!=ast.end(); it++){
-		tmpJSON=it->second;
-		if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-			editorParser(tmpJSON.mapVal);
-		}
-	}
-}
 
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
@@ -452,20 +299,20 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				defaultAnim.assign(tmpJSON.retVal.stringVal);
 			}
 			std::cout<<"defaultAnim:"<<defaultAnim<<"\n";
-			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid);
+			go=new GameObject(defaultAnim, Models[mname], width, height, pos_X, pos_Y, vel_X, vel_Y, acc_X, acc_Y, obname.c_str(), rigid, staticV);
 			std::map<std::string, retJSON> mapVal;
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "ModelListAnim");
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				mapVal = tmpJSON.mapVal;
-			}
-			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
-				if(itt->second.type == "string"){
-					defaultAnim.assign(itt->second.retVal.stringVal);
+				for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
+					if(itt->second.type == "string"){
+						defaultAnim.assign(itt->second.retVal.stringVal);
+					}
+					std::cout<<"AnimState:"<<defaultAnim<<"\n";
+					go->add_state_animation_pair(defaultAnim,defaultAnim);
 				}
-				std::cout<<"AnimState:"<<defaultAnim<<"\n";
-				go->add_state_animation_pair(defaultAnim,defaultAnim);
 			}
-
+			//integrating variable
 			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "variable");
 			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
 				mapVal = tmpJSON.mapVal;
@@ -483,7 +330,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				go->add_variable(variable_name,variable_val);
 			}
 
-			/*go->add_state_animation_pair("standing","standing");
+		
 			go->add_state_animation_pair("walk_right","walk_right");
 			go->add_state_animation_pair("walk_left","walk_left");*/
 			e= new Event();
@@ -663,23 +510,13 @@ void Game::collisionResolution(){
 				continue;*/
 			std::cout<<go1->object_id+" checks "+go2->object_id<<"\n";
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
-<<<<<<< Updated upstream
 				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
-				
-				float x_overlap=std::min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
-				float y_overlap=std::min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
-=======
-<<<<<<< Updated upstream
-				go1->translateX(-go1->velocity.getX());
-				go2->translateX(-go2->velocity.getX());
-				go1->translateY(-go1->velocity.getY());
-				go2->translateY(-go2->velocity.getY());
-=======
+
 				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
 				
 				float x_overlap=min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
 				float y_overlap=min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
->>>>>>> Stashed changes
+
 				if(x_overlap<y_overlap){
 					GameObject* left_go;
 					GameObject* right_go;
@@ -803,10 +640,7 @@ void Game::collisionResolution(){
 					go2->translateY(-go2_y_adj);
 					go1->translateY(go1_y_adj);
 				}*/
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
 			}
 			
 		}
