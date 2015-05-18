@@ -8,6 +8,12 @@ void TextObject::setSize(float size){
 void TextObject::setText(std::string text){
 	TextObject::text=text;
 }
+void TextObject::setVisible(bool visible){
+	TextObject::visible=visible;
+}
+std::string TextObject::getId(){
+	return id;
+}
 TextObject::TextObject(Vector2D position, std::string id, std::string text, std::string font_file, float size, float color_red, float color_green, float color_blue){
 	TextObject::position=position;
 	TextObject::id=id;

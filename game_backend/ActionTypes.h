@@ -15,6 +15,7 @@ public:
 	void playSound(std::string);
 	void deleteObject(GameObject* game_object);
 	void changevariable(GameObject*,std::string,float);
+	void changeTextVisibility(std::string,bool);
 	static ActionTypes* Instance(){
 		if(s_pInstance==0){
 			s_pInstance=new ActionTypes();

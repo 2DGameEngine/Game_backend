@@ -20,9 +20,11 @@ public:
 	float color_blue;
 	float size;
 	bool visible;
+	void setVisible(bool visible);
 	void setPosition(Vector2D position);
 	void setText(std::string text);
 	void setSize(float size);
+	std::string getId();
 	bool TextObject::load_texture();
 	void draw();
 private:

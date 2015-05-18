@@ -18,6 +18,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		TextObject * test = new TextObject(Vector2D(600,200),"test","Feathergun","assets/monofonto.ttf",40);
 		TextObjectManager::Instance()->addObject(test);
 
+
 		m_bRunning=true;
 		
 		Model* dude=new Model();
@@ -120,6 +121,15 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->addAction(new Action("set_position_y","dude1",2));
 			e->addAction(new Action("set_state","dude1","walk_left"));
 			e->addAction(new Action("play_sound","walking_sound"));
+			go->addEvent(e);
+
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_P);
+			e->addAction(new Action("change_text_visibility","test",true));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_O);
+			e->addAction(new Action("change_text_visibility","test",false));
 			go->addEvent(e);
 
 			e=new Event();
