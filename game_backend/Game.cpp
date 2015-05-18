@@ -465,9 +465,27 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 				std::cout<<"AnimState:"<<defaultAnim<<"\n";
 				go->add_state_animation_pair(defaultAnim,defaultAnim);
 			}
-			/*go->add_state_animation_pair("standing","standing");*/
+
+			tmpJSON = FileManager::Instance()->returnVALUE(it->second, "variable");
+			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
+				mapVal = tmpJSON.mapVal;
+			}
+			for(std::map<std::string, retJSON>::const_iterator itt = mapVal.begin(); itt != mapVal.end(); ++itt){
+				std::string variable_name;
+				float variable_val;
+				if(itt->second.type == "int"){
+					variable_val=itt->second.retVal.intVal;
+				}
+				else if(itt->second.type == "float"){
+					variable_val=itt->second.retVal.floatVal;
+				}
+				variable_name=itt->first;
+				go->add_variable(variable_name,variable_val);
+			}
+
+			/*go->add_state_animation_pair("standing","standing");
 			go->add_state_animation_pair("walk_right","walk_right");
-			go->add_state_animation_pair("walk_left","walk_left");
+			go->add_state_animation_pair("walk_left","walk_left");*/
 			e= new Event();
 			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_D);
 			e->addAction(new Action("set_velocity",go,Vector2D(1,0)));
@@ -490,7 +508,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go->addEvent(e);
 			GameObjectManager::Instance()->addObject(go);
 		}
-
 
 
 
@@ -646,10 +663,23 @@ void Game::collisionResolution(){
 				continue;*/
 			std::cout<<go1->object_id+" checks "+go2->object_id<<"\n";
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
+<<<<<<< Updated upstream
 				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
 				
 				float x_overlap=std::min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
 				float y_overlap=std::min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
+=======
+<<<<<<< Updated upstream
+				go1->translateX(-go1->velocity.getX());
+				go2->translateX(-go2->velocity.getX());
+				go1->translateY(-go1->velocity.getY());
+				go2->translateY(-go2->velocity.getY());
+=======
+				std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
+				
+				float x_overlap=min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
+				float y_overlap=min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
+>>>>>>> Stashed changes
 				if(x_overlap<y_overlap){
 					GameObject* left_go;
 					GameObject* right_go;
@@ -773,6 +803,10 @@ void Game::collisionResolution(){
 					go2->translateY(-go2_y_adj);
 					go1->translateY(go1_y_adj);
 				}*/
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 			}
 			
 		}
