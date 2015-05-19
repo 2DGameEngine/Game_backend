@@ -4,6 +4,8 @@
 #include "Action.h"
 #include "InputHandler.h"
 #include "CollisionManager.h"
+#include "FileManager.h"
+#include "Parser.h"
 #include <string>
 class Action;
 enum event_types{
@@ -15,16 +17,18 @@ enum event_types{
 	};
 class Event{
 public:
-	void setEvent(event_types,SDL_Scancode);
-	void setEvent(event_types,std::string);
-	void setEvent(event_types,std::string,std::string,float);
-	std::vector<Action*> action_list;
+	void setEvent(std::string,std::string,std::map<std::string,retJSON>);
+	void setEvent(std::string,std::map<std::string,retJSON>,std::map<std::string,retJSON>);
+	//std::vector<Action*> action_list;
 	void addAction(Action*);
 	bool checkEvent(bool);
 	void handleEvent(bool);
 	GameObject* parent;
 private:
-	event_types event_type;
+	std::string eventType;
+	std::string check_value;
+	std::map<std::string,retJSON> event_condition;
+	std::map<std::string,retJSON> action_list;
 	SDL_Scancode scancode;
 	GameObject* subject;
 	std::string variable_n;
