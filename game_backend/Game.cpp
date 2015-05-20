@@ -6,188 +6,25 @@
 #include "FileManager.h"
 #include <string>
 #include <sstream>
-
-std::vector<std::string> split(std::string str, char delimiter) {
-  std::vector<std::string> internalL;
-  std::stringstream ss(str); // Turn the string into a stream.
-  std::string tok;
-  std::cout<<"Split "<<str<<"=";
-  while(std::getline(ss, tok, delimiter)) {
-	  std::cout<<tok<<" ";
-    internalL.push_back(tok);
-  }
-  std::cout<<"\n";
-  return internalL;
-}
-
-float get_variable(std::string object_id,std::string variable_name){
-	return GameObjectManager::Instance()->getObject(object_id)->return_variable_value(variable_name);
-}
-
-void set_variable(std::string object_id,std::string variable_name, float op2){
-	GameObjectManager::Instance()->getObject(object_id)->change_variable(variable_name, op2);
-}
-
-float editorParserRec(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	std::string operand;
-	char *strFn;
-	float op1, op2;
-	tmpJSON = ast["0"];
-	if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		operand = tmpJSON.retVal.stringVal;
-	}
-	else
-		return 0;
-	tmpJSON = ast["1"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op1 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op1 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op1 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op1 = tmpJSON.retVal.floatVal;
-	tmpJSON = ast["2"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op2 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op2 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op2 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op2 = tmpJSON.retVal.floatVal;
-	if(operand == "/"){
-		return (op1/op2);
-	}
-	else if(operand == "*"){
-		return (op1*op2);
-	}
-	else if(operand == "+"){
-		return (op1+op2);
-	}
-	else if(operand == "-"){
-		return (op1-op2);
-	}
-	return 0;
-}
-
-bool editorParser(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	std::string operand;
-	char* strFn;
-	float op1, op2;
-	tmpJSON = ast["0"];
-	if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		operand = tmpJSON.retVal.stringVal;
-	}
-	else
-		return false;
-	tmpJSON = ast["1"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op1 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op1 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op1 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op1 = tmpJSON.retVal.floatVal;
-	tmpJSON = ast["2"];
-	if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-		op2 = editorParserRec(tmpJSON.mapVal);
-	}
-	else if(tmpJSON.type == "string"){
-		std::cout<<tmpJSON.retVal.stringVal<<"\n";
-		std::vector<std::string> splitS = split(tmpJSON.retVal.stringVal, '.');
-		op2 = get_variable(splitS[0], splitS[1]);
-	}
-	else if(tmpJSON.type == "int")
-		op2 = tmpJSON.retVal.intVal;
-	else if(tmpJSON.type == "float")
-		op2 = tmpJSON.retVal.floatVal;
-	if(operand=="Assign"){
-		std::vector<std::string> splitS = split(ast["1"].retVal.stringVal, '.');
-		set_variable(splitS[0], splitS[1], op2);
-		return true;
-	}
-	else if(operand=="if"){
-		if(op1==op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifL"){
-		if(op1<op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifLE"){
-		if(op1<=op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifG"){
-		if(op1>op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	else if(operand=="ifGE"){
-		if(op1>=op2){
-			tmpJSON = ast["3"];
-			if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-				return editorParser(tmpJSON.mapVal);
-			}
-		}
-	}
-	return false;
-}
-
-void editorEval(std::map<std::string, retJSON> ast){
-	struct retJSON tmpJSON;
-	for(std::map<std::string, retJSON>::iterator it = ast.begin(); it!=ast.end(); it++){
-		tmpJSON=it->second;
-		if(tmpJSON.type == "array" || tmpJSON.type == "object"){
-			editorParser(tmpJSON.mapVal);
-		}
-	}
-}
-
+#include "SDL_ttf.h"
+#include "Camera.h"
 bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool fullscreen){
 	int flags=0;
 	gravity=.1;
 	if(fullscreen==true)
 		flags=SDL_WINDOW_FULLSCREEN;
-	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)){
+	if(SDL_Init(SDL_INIT_EVERYTHING)==0&&(m_pWindow=SDL_CreateWindow(title,xpos,ypos,width,height,flags))&&(m_pRenderer=SDL_CreateRenderer(m_pWindow,-1,0))&&(Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) ==0)&&(TTF_Init() != -1)){
 		std::cout<< "success\n";
 		SDL_SetRenderDrawColor(m_pRenderer,255,255,0,255);
 
-		camera = new Camera(500,500,Vector2D(50,50),"static","dude1",Vector2D(50,50));
+		camera = new Camera(1000,1000,Vector2D(50,50),"dynamic","dude1",Vector2D(50,50));
+
+		TextObject * test = new TextObject(Vector2D(600,200),"test","Feathergun","assets/monofonto.ttf",40);
+		TextObjectManager::Instance()->addObject(test);
+
+
 		m_bRunning=true;
-		SDL_SetWindowSize(m_pWindow,camera->width,camera->height);
+
 		Model* dude=new Model();
 		dude->load_texture("assets/dude.png");
 		dude->set_width_and_height_frame(500/6,378/3);
@@ -226,6 +63,7 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			go2=new GameObject("standing",dude,500/6,378/3,200,200,0,0,0,0,"dude2",true,false);
 			go3=new GameObject("standing",dude,5000/6,3780/3,0,200,0,0,0,0,"dude3",true,true);
 
+
 			GameObjectManager::Instance()->addObject(go2);
 			GameObjectManager::Instance()->addObject(go);
 			GameObjectManager::Instance()->addObject(go3);
@@ -252,7 +90,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 		SoundManager::Instance()->addSound(s,"walking_sound");
 		SoundManager::Instance()->addSound(s2,"walking_sound1");
 		go->add_variable("health",100);
-		go1->add_variable("health",100);
 			e= new Event();
 			e->setEvent(VARIABLE_VALUE_TRIGGER,"dude1","health",80);
 			e->addAction(new Action("play_sound","walking_sound1"));
@@ -290,6 +127,16 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 			e->addAction(new Action("play_sound","walking_sound"));
 			go->addEvent(e);
 			e=new Event();
+
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_P);
+			e->addAction(new Action("change_text_string","test","aaaaaaaaaaaaaaa"));
+			go->addEvent(e);
+			e=new Event();
+			e->setEvent(BUTTON_CLICK,SDL_SCANCODE_O);
+			e->addAction(new Action("change_text_string","test","bbbbbbbbbbbbbbb"));
+			go->addEvent(e);
+
+			e=new Event();
 			e->setEvent(BUTTON_RELEASE,SDL_SCANCODE_A);
 			e->addAction(new Action("set_velocity_x","dude1",0));
 			e->addAction(new Action("set_state","dude1","standing"));
@@ -311,8 +158,6 @@ bool Game::init(const char* title,int xpos,int ypos,int width,int height, bool f
 
 			//e->addAction(new Action("delete_object",go));
 			go->addEvent(e);
-			editorEval(FileManager::Instance()->readJSON("tree.json").mapVal["0"].mapVal);
-			std::cout<<"DUDE1.health="<<get_variable("dude1", "health")<<" dude4.health="<<get_variable("dude4", "health");
 		return true;
 	}
 	else{
@@ -327,6 +172,14 @@ void Game::render(){
 			continue;
 		GameObjectManager::Instance()->getObjectList()[i]->draw();
 	}
+
+	for(std::vector<int>::size_type i = 0; i != TextObjectManager::Instance()->getObjectList().size(); i++) {
+		if(TextObjectManager::Instance()->getObjectList()[i]->visible==false)
+			continue;
+		TextObjectManager::Instance()->getObjectList()[i]->draw();
+	}
+		
+	
 	SDL_RenderPresent(m_pRenderer);
 }
 void Game::update(){
@@ -364,7 +217,6 @@ void Game::clean(){
 	SDL_Quit();
 }
 void Game::collisionResolution(){
-	//std::cout<<"checking"<<"\n";
 	for(std::vector<int>::size_type i = 0; i != GameObjectManager::Instance()->getObjectList().size(); i++) {
 		GameObject* go1=GameObjectManager::Instance()->getObjectList()[i];
 			if(go1->rigid==false||go1->is_alive==false)
@@ -375,9 +227,7 @@ void Game::collisionResolution(){
 				continue;
 			/*if(go1==go2)
 				continue;*/
-			//std::cout<<go1->object_id+" checks "+go2->object_id<<"\n";
 			if(CollisionManager::Instance()->isColliding(go1->collision_polygon,go2->collision_polygon)){
-				//std::cout<<go1->object_id+" collides "+go2->object_id<<"\n";
 				
 				float x_overlap=min(std::abs(go1->getPosition().getX()+go1->width-go2->getPosition().getX()),std::abs(go2->getPosition().getX()+go2->width-go1->getPosition().getX()));
 				float y_overlap=min(std::abs(go1->getPosition().getY()+go1->height-go2->getPosition().getY()),std::abs(go2->getPosition().getY()+go2->height-go1->getPosition().getY()));
@@ -508,7 +358,6 @@ void Game::collisionResolution(){
 			
 		}
 	}
-	//std::cout<<"resolved"<<"\n";
 }
 void Game::deleteObjects(){
 	std::vector<GameObject*>::iterator it;
